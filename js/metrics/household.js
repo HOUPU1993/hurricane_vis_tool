@@ -1,0 +1,8 @@
+import { fmtPct, fmtPeople } from "../core/format.js";
+
+export const CATEGORY = "Household Structure";
+
+export const METRICS = [
+  { field: "pct_hh_children", label: "Households with Children", category: CATEGORY, format: fmtPct, clipLow: 2, clipHigh: 98 },
+  { field: "avg_household_size", label: "Average Household Size", category: CATEGORY, format: fmtPeople, clipLow: 2, clipHigh: 98 },
+];

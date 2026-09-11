@@ -11,25 +11,19 @@
   <div id="app">
     <aside id="sidebar">
       <h1>Hurricane Evacuation Dashboard</h1>
-      <p class="subtitle">Social vulnerability, evacuation rate, and displacement duration by county</p>
+      <p class="subtitle">Evacuation behavior, displacement, and social vulnerability by block group</p>
 
       <label for="metric-select">Metric</label>
-      <select id="metric-select">
-        <option value="svi" selected>Social Vulnerability Index</option>
-        <option value="evacuation_rate">Evacuation Rate</option>
-        <option value="displacement_days">Displacement Duration (days)</option>
-      </select>
+      <select id="metric-select"></select>
 
       <div id="legend"></div>
-
-      <div id="county-info">
-        <p class="placeholder">Click a county to see details.</p>
-      </div>
+      <div id="histogram"></div>
+      <div id="detail-panel"></div>
     </aside>
     <main id="map"></main>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/main.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
