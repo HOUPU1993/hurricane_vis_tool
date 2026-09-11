@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hurricane Evacuation Dashboard</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <h1>Hurricane Evacuation Dashboard</h1>
+      <p class="subtitle">Social vulnerability, evacuation rate, and displacement duration by county</p>
+
+      <label for="metric-select">Metric</label>
+      <select id="metric-select">
+        <option value="svi" selected>Social Vulnerability Index</option>
+        <option value="evacuation_rate">Evacuation Rate</option>
+        <option value="displacement_days">Displacement Duration (days)</option>
+      </select>
+
+      <div id="legend"></div>
+
+      <div id="county-info">
+        <p class="placeholder">Click a county to see details.</p>
+      </div>
+    </aside>
+    <main id="map"></main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

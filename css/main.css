@@ -1,0 +1,19 @@
+html, body { margin:0; padding:0; height:100%; font-family: -apple-system, Helvetica, Arial, sans-serif; }
+#app { display:flex; height:100vh; }
+#sidebar { width:320px; flex-shrink:0; padding:20px; box-sizing:border-box; background:#1e2a44; color:#f2f4f8; overflow-y:auto; }
+#sidebar h1 { font-size:18px; margin:0 0 4px; }
+.subtitle { font-size:13px; color:#b7c0d8; margin:0 0 20px; line-height:1.4; }
+label { display:block; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; color:#8fa0c7; margin-bottom:6px; }
+select { width:100%; padding:8px; border-radius:6px; border:none; margin-bottom:20px; font-size:14px; }
+#legend { background:rgba(255,255,255,0.06); border-radius:8px; padding:12px; margin-bottom:20px; font-size:12px; }
+#legend .legend-row { display:flex; align-items:center; gap:8px; margin:4px 0; }
+#legend .swatch { width:14px; height:14px; border-radius:3px; flex-shrink:0; }
+#county-info { background:rgba(255,255,255,0.06); border-radius:8px; padding:12px; font-size:13px; line-height:1.6; }
+#county-info .placeholder { color:#8fa0c7; margin:0; }
+#county-info h2 { margin:0 0 8px; font-size:15px; }
+#county-info .metric-row { display:flex; justify-content:space-between; }
+#map { flex:1; }
+@media (max-width: 700px) {
+  #app { flex-direction:column; }
+  #sidebar { width:100%; max-height:45vh; }
+}
