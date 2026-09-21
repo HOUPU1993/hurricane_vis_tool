@@ -2,8 +2,11 @@ import { computeDomain, colorForValue } from "./colorScale.js";
 
 export function initMap(containerId) {
   const map = L.map(containerId, { zoomControl: true }).setView([27.3, -82.4], 8);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "&copy; OpenStreetMap contributors",
+  // CartoDB Dark Matter: free, no API key, high contrast so choropleth fills
+  // stay readable and land/ocean recede instead of competing with the data.
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+    subdomains: "abcd",
     maxZoom: 14,
   }).addTo(map);
   return map;
@@ -18,6 +21,10 @@ export function initMap(containerId) {
 // captured (n_evacuees / ACS population). Low-confidence block groups render
 // more transparent, so a striking color in a nearly-empty-sample area
 // doesn't read as equally certain as one backed by a large sample.
+//
+// No border by default: with ~900 block groups, some tiny, a stroke around
+// every polygon reads as more ink than data at this zoom. A border appears
+// only on hover, as feedback that a shape is interactive.
 export function drawChoropleth({ map, layerRef, data, metric, onFeatureClick }) {
   const domain = computeDomain(data.features, metric);
   const opacityDomain = metric.opacityField
@@ -26,25 +33,27 @@ export function drawChoropleth({ map, layerRef, data, metric, onFeatureClick }) 
 
   if (layerRef.current) map.removeLayer(layerRef.current);
 
-  layerRef.current = L.geoJSON(data, {
-    style: (feature) => {
-      const value = feature.properties[metric.field];
-      let fillOpacity = 0.85;
-      if (opacityDomain) {
-        const conf = feature.properties[metric.opacityField];
-        if (conf == null) {
-          fillOpacity = 0.15;
-        } else {
-          const { lo, hi } = opacityDomain;
-          const t = hi === lo ? 1 : Math.max(0, Math.min(1, (conf - lo) / (hi - lo)));
-          fillOpacity = 0.25 + t * 0.65;
-        }
+  const baseStyle = (feature) => {
+    const value = feature.properties[metric.field];
+    let fillOpacity = 0.85;
+    if (opacityDomain) {
+      const conf = feature.properties[metric.opacityField];
+      if (conf == null) {
+        fillOpacity = 0.15;
+      } else {
+        const { lo, hi } = opacityDomain;
+        const t = hi === lo ? 1 : Math.max(0, Math.min(1, (conf - lo) / (hi - lo)));
+        fillOpacity = 0.25 + t * 0.65;
       }
-      return { fillColor: colorForValue(value, domain), color: "#ffffff", weight: 1, fillOpacity };
-    },
+    }
+    return { fillColor: colorForValue(value, domain), stroke: false, fillOpacity };
+  };
+
+  layerRef.current = L.geoJSON(data, {
+    style: baseStyle,
     onEachFeature: (feature, layer) => {
       layer.on("click", () => onFeatureClick(feature));
-      layer.on("mouseover", () => layer.setStyle({ weight: 2, color: "#0b0b0b" }));
+      layer.on("mouseover", () => layer.setStyle({ stroke: true, weight: 1.5, color: "#ffffff" }));
       layer.on("mouseout", () => layerRef.current.resetStyle(layer));
     },
   }).addTo(map);
