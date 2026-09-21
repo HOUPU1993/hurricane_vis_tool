@@ -2,11 +2,11 @@ import { computeDomain, colorForValue } from "./colorScale.js";
 
 export function initMap(containerId) {
   const map = L.map(containerId, { zoomControl: true }).setView([27.3, -82.4], 8);
-  // CartoDB Dark Matter: free, no API key, high contrast so choropleth fills
-  // stay readable and land/ocean recede instead of competing with the data.
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
-    subdomains: "abcd",
+  // Standard OpenStreetMap tiles - no API key, no third-party account to
+  // break later. Darkened via CSS (.leaflet-tile-pane filter in main.css)
+  // instead of depending on a dark-tile provider.
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors",
     maxZoom: 14,
   }).addTo(map);
   return map;
