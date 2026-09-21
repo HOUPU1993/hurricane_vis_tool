@@ -2,13 +2,17 @@ import { computeDomain, colorForValue } from "./colorScale.js";
 
 export function initMap(containerId) {
   const map = L.map(containerId, { zoomControl: true }).setView([27.3, -82.4], 8);
-  // Standard OpenStreetMap tiles - no API key, no third-party account to
-  // break later. Darkened via CSS (.leaflet-tile-pane filter in main.css)
-  // instead of depending on a dark-tile provider.
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "&copy; OpenStreetMap contributors",
-    maxZoom: 14,
-  }).addTo(map);
+  // Esri World Dark Gray Canvas - a genuinely dark basemap (not a filtered
+  // light one), free with no API key/account. Falls back to CSS-darkened
+  // OSM tiles (see .leaflet-tile-pane in main.css) if this ever stops
+  // resolving - swap the URL back to the OSM one in git history.
+  L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+    {
+      attribution: "Esri, HERE, Garmin, &copy; OpenStreetMap contributors",
+      maxZoom: 14,
+    }
+  ).addTo(map);
   return map;
 }
 
