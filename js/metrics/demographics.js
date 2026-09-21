@@ -17,5 +17,4 @@ export const METRICS = [
     clipLow: 5,
     clipHigh: 95, // heavy right tail
   },
-  { field: "pct_disability", label: "Population with a Disability", category: CATEGORY, format: fmtPct, clipLow: 2, clipHigh: 98 },
 ];

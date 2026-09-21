@@ -64,11 +64,9 @@ from the project root to refresh `data/blockgroups.geojson`.
   coverage directly.
 - Units for `proximity` and `peak_wind` (Hurricane Characteristics) are not
   yet confirmed in `js/metrics/hurricane.js` - fill those in before sharing.
-- **Known data gap**: `pct_disability` is null for all 915 block groups in
-  the source data - `disab_count` and `disab_universe` (its numerator/
-  denominator) are both 0 for every feature in `vis_vbs.geojson`, upstream
-  of this repo. The site correctly shows "no data" for it rather than a
-  fabricated value; worth checking the pipeline that produces that field.
+- `pct_disability` was dropped (not plotted): it was null for all 915
+  block groups in the source data (`disab_count`/`disab_universe` are both
+  0 upstream, in `vis_vbs.geojson`) and not needed for this dashboard.
 
 ## Rollback points
 

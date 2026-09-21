@@ -47,7 +47,6 @@ KEEP_FIELDS = [
     "pct_asian",
     "pct_hispanic",
     "pop_density",
-    "pct_disability",
     # Education & income
     "pop_college",
     "pct_inc_q1",
