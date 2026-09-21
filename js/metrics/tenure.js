@@ -1,6 +1,7 @@
 import { fmtYears } from "../core/format.js";
 
 export const CATEGORY = "Tenure Length";
+export const CATEGORY_COLOR = "#eda100"; // one hue per dimension, not all blue
 
 export const METRICS = [
   {

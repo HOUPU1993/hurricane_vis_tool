@@ -45,20 +45,39 @@ from the project root to refresh `data/blockgroups.geojson`.
 
 ## Design notes
 
-- **Color scale**: continuous, one hue (blue), light = low, dark = high.
-  Several fields (evacuation distance, home equity, mortgage remaining,
-  population density) are extremely right-skewed, so the color domain is
-  clipped to a percentile range per metric (2nd-98th by default, 5th-95th
-  for the more skewed ones - see `clipLow`/`clipHigh` in each metric file)
-  rather than raw min/max. A value outside the clipped range still renders,
-  clamped to the ramp's end color; the exact, unclipped value is always
-  shown in the detail panel on click.
-- **Confidence-weighted opacity**: for the evacuation-detection metrics,
-  fill opacity also scales with `confidence` (sample coverage), so a
-  striking color backed by a tiny sample reads as less certain than the
-  same color backed by a large one.
+- **Color scale**: one hue per dimension (see `CATEGORY_COLOR` in each
+  `js/metrics/*.js` file), not blue for everything - `js/core/colorScale.js`
+  turns each hue into a light-to-dark ramp the same way (HSL, fixed
+  lightness/saturation steps), so every metric is built consistently even
+  though the hues differ.
+- **Percentile-clipped domain**: several fields (evacuation distance, home
+  equity, mortgage remaining, population density) are extremely
+  right-skewed, so the color domain is clipped per metric (2nd-98th
+  percentile by default, 5th-95th for the more skewed ones - see
+  `clipLow`/`clipHigh` in each metric file) rather than raw min/max. A value
+  outside the clipped range still renders, clamped to the ramp's end color;
+  the exact, unclipped value is always shown in the detail panel on click.
+- **Fill opacity is a flat 0.85 for every metric.** An earlier version
+  scaled evacuation-metric opacity by detection `confidence`, but that made
+  those maps too faint to compare block groups against each other.
+  `confidence` is still its own selectable metric if you want to see sample
+  coverage directly.
 - Units for `proximity` and `peak_wind` (Hurricane Characteristics) are not
   yet confirmed in `js/metrics/hurricane.js` - fill those in before sharing.
+- **Known data gap**: `pct_disability` is null for all 915 block groups in
+  the source data - `disab_count` and `disab_universe` (its numerator/
+  denominator) are both 0 for every feature in `vis_vbs.geojson`, upstream
+  of this repo. The site correctly shows "no data" for it rather than a
+  fabricated value; worth checking the pipeline that produces that field.
+
+## Rollback points
+
+Tagged milestones in this repo (`git tag -l`, `git checkout <tag>` to view,
+`git reset --hard <tag>` to actually roll back):
+
+- `v1-dark-milestone` - dark Esri basemap, no CBG borders (hover-only shows
+  a white outline), real block-group data, single blue hue for every
+  metric, confidence-weighted opacity on evacuation metrics.
 
 ## Running locally
 

@@ -1,6 +1,7 @@
 import { fmtPct, fmtDensity } from "../core/format.js";
 
 export const CATEGORY = "Population & Race";
+export const CATEGORY_COLOR = "#008300"; // one hue per dimension, not all blue
 
 export const METRICS = [
   { field: "pct_65p", label: "Population 65+", category: CATEGORY, format: fmtPct, clipLow: 2, clipHigh: 98 },

@@ -1,6 +1,7 @@
 import { fmtPct } from "../core/format.js";
 
 export const CATEGORY = "Housing Cost Burden";
+export const CATEGORY_COLOR = "#e87ba4"; // one hue per dimension, not all blue
 
 export const METRICS = [
   {

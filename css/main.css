@@ -4,7 +4,6 @@ html, body { margin:0; padding:0; height:100%; font-family: -apple-system, "Sego
 #sidebar {
   width:340px; flex-shrink:0; padding:20px; box-sizing:border-box;
   background:#1e2a44; color:#f2f4f8; overflow-y:auto;
-  --hist-bar: #6da7ec;
 }
 #sidebar h1 { font-size:18px; margin:0 0 4px; }
 .subtitle { font-size:13px; color:#b7c0d8; margin:0 0 20px; line-height:1.4; }

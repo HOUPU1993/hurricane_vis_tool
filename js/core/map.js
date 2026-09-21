@@ -4,8 +4,9 @@ export function initMap(containerId) {
   const map = L.map(containerId, { zoomControl: true }).setView([27.3, -82.4], 8);
   // Esri World Dark Gray Canvas - a genuinely dark basemap (not a filtered
   // light one), free with no API key/account. Falls back to CSS-darkened
-  // OSM tiles (see .leaflet-tile-pane in main.css) if this ever stops
-  // resolving - swap the URL back to the OSM one in git history.
+  // OSM tiles (see the commented-out rule in main.css) if this ever stops
+  // resolving - swap the URL back to the OSM one in git history (tag
+  // v1-dark-milestone has the CSS-filter version working end to end).
   L.tileLayer(
     "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
     {
@@ -18,43 +19,26 @@ export function initMap(containerId) {
 
 // Redraws the choropleth for one metric. `layerRef` is a { current } box so
 // the caller can remove the previous layer before adding the new one.
-//
-// Opacity trick: for metrics flagged with `opacityField` (currently the
-// evacuation-detection metrics + `confidence`), fill opacity is scaled by
-// how much of the block group's population the mobile-phone panel actually
-// captured (n_evacuees / ACS population). Low-confidence block groups render
-// more transparent, so a striking color in a nearly-empty-sample area
-// doesn't read as equally certain as one backed by a large sample.
+// Fill opacity is a flat 0.85 for every metric - it used to scale with
+// evacuation-detection confidence, but that made those particular maps read
+// as too faint to compare across block groups. Confidence is still its own
+// selectable metric if you want to see sample coverage directly.
 //
 // No border by default: with ~900 block groups, some tiny, a stroke around
 // every polygon reads as more ink than data at this zoom. A border appears
 // only on hover, as feedback that a shape is interactive.
+const FILL_OPACITY = 0.85;
+
 export function drawChoropleth({ map, layerRef, data, metric, onFeatureClick }) {
   const domain = computeDomain(data.features, metric);
-  const opacityDomain = metric.opacityField
-    ? computeDomain(data.features, { field: metric.opacityField, clipLow: 5, clipHigh: 95 })
-    : null;
 
   if (layerRef.current) map.removeLayer(layerRef.current);
 
-  const baseStyle = (feature) => {
-    const value = feature.properties[metric.field];
-    let fillOpacity = 0.85;
-    if (opacityDomain) {
-      const conf = feature.properties[metric.opacityField];
-      if (conf == null) {
-        fillOpacity = 0.15;
-      } else {
-        const { lo, hi } = opacityDomain;
-        const t = hi === lo ? 1 : Math.max(0, Math.min(1, (conf - lo) / (hi - lo)));
-        fillOpacity = 0.25 + t * 0.65;
-      }
-    }
-    return { fillColor: colorForValue(value, domain), stroke: false, fillOpacity };
-  };
-
   layerRef.current = L.geoJSON(data, {
-    style: baseStyle,
+    style: (feature) => {
+      const value = feature.properties[metric.field];
+      return { fillColor: colorForValue(value, domain, metric.color), stroke: false, fillOpacity: FILL_OPACITY };
+    },
     onEachFeature: (feature, layer) => {
       layer.on("click", () => onFeatureClick(feature));
       layer.on("mouseover", () => layer.setStyle({ stroke: true, weight: 1.5, color: "#ffffff" }));

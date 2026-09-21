@@ -1,10 +1,10 @@
 import { NO_DATA_COLOR, ramp } from "./colorScale.js";
 
-// Continuous gradient legend: a CSS gradient strip built from the same ramp
-// used to color the map, with tick labels at the (percentile-clipped) low,
-// mid, and high ends, plus a swatch for "no data" block groups.
+// Continuous gradient legend: a CSS gradient strip built from the metric's
+// own hue ramp, with tick labels at the (percentile-clipped) low, mid, and
+// high ends, plus a swatch for "no data" block groups.
 export function renderLegend(container, metric, domain) {
-  const gradient = `linear-gradient(to right, ${ramp().join(",")})`;
+  const gradient = `linear-gradient(to right, ${ramp(metric.color).join(",")})`;
   const mid = (domain.lo + domain.hi) / 2;
   container.innerHTML = `
     <div class="legend-title">${metric.label}</div>

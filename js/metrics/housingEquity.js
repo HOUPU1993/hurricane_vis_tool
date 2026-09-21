@@ -1,6 +1,7 @@
 import { fmtCurrency, fmtPct, fmtYears } from "../core/format.js";
 
 export const CATEGORY = "Home Equity & Mortgage";
+export const CATEGORY_COLOR = "#1baf7a"; // one hue per dimension, not all blue
 
 export const METRICS = [
   {

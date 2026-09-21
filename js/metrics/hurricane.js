@@ -1,6 +1,7 @@
 import { fmtNum } from "../core/format.js";
 
 export const CATEGORY = "Hurricane Characteristics";
+export const CATEGORY_COLOR = "#eb6834"; // one hue per dimension, not all blue
 
 // TODO: confirm real units for these two fields (likely km and mph or kt)
 // and update the labels/formatters once confirmed - left unitless here

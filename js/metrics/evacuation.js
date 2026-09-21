@@ -1,6 +1,7 @@
 import { fmtPct, fmtKm, fmtDays } from "../core/format.js";
 
 export const CATEGORY = "Mobile Phone Evacuation Detection";
+export const CATEGORY_COLOR = "#2a78d6"; // blue
 
 export const METRICS = [
   {
@@ -10,7 +11,6 @@ export const METRICS = [
     format: fmtPct,
     clipLow: 2,
     clipHigh: 98,
-    opacityField: "confidence",
   },
   {
     field: "median_evacuation_distance_km",
@@ -19,7 +19,6 @@ export const METRICS = [
     format: fmtKm,
     clipLow: 5,
     clipHigh: 95, // heavy right tail (p99 is ~30x the median) - clip harder
-    opacityField: "confidence",
   },
   {
     field: "median_return_days",
@@ -28,13 +27,15 @@ export const METRICS = [
     format: fmtDays,
     clipLow: 2,
     clipHigh: 98,
-    opacityField: "confidence",
   },
   {
     // n_evacuees / ACS population, capped at 1 (see scripts/prepare_data.py).
     // Small by construction - a GPS panel only ever covers a slice of the
     // real population - so this reads as *relative* sample coverage across
-    // block groups, not an absolute detection rate.
+    // block groups, not an absolute detection rate. Kept as its own metric
+    // (rather than driving other metrics' opacity, which made some maps too
+    // faint to read differences in) so sample coverage stays inspectable on
+    // its own terms.
     field: "confidence",
     label: "Detection Confidence (evacuees / population)",
     category: CATEGORY,

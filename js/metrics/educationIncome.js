@@ -1,6 +1,7 @@
 import { fmtCount, fmtPct } from "../core/format.js";
 
 export const CATEGORY = "Education & Income";
+export const CATEGORY_COLOR = "#4a3aa7"; // one hue per dimension, not all blue
 
 export const METRICS = [
   {

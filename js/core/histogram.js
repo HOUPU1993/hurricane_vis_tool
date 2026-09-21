@@ -1,13 +1,18 @@
+import { ramp } from "./colorScale.js";
+
 // Minimal dependency-free SVG histogram of a metric's full (unclipped)
 // distribution, with dashed guide lines marking the percentile clip bounds
 // used by the map's color scale - so it's visible how many block groups sit
-// outside the colored range. Each bar carries a native <title> tooltip.
+// outside the colored range. Bars use the same hue as the map/legend for
+// this metric. Each bar carries a native <title> tooltip.
 export function renderHistogram(container, domain, metric) {
   const values = domain.values;
   if (!values.length) {
     container.innerHTML = '<div class="hist-empty">No data for this metric.</div>';
     return;
   }
+
+  const barColor = ramp(metric.color)[2]; // mid-tone of this metric's ramp
 
   const width = 280;
   const height = 84;
@@ -34,7 +39,7 @@ export function renderHistogram(container, domain, metric) {
       const y = height - pad - barH;
       const rangeLo = (min + i * binWidth).toFixed(2);
       const rangeHi = (min + (i + 1) * binWidth).toFixed(2);
-      return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(0, barW - 0.5).toFixed(1)}" height="${barH.toFixed(1)}" fill="var(--hist-bar)"><title>${rangeLo}&ndash;${rangeHi}: ${count} block groups</title></rect>`;
+      return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(0, barW - 0.5).toFixed(1)}" height="${barH.toFixed(1)}" fill="${barColor}"><title>${rangeLo}&ndash;${rangeHi}: ${count} block groups</title></rect>`;
     })
     .join("");
 
