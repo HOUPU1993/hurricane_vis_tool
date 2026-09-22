@@ -49,6 +49,12 @@ html, body {
 /* ---- page switching + entrance animation ------------------------------ */
 .page { display: none; }
 .page--active { display: block; }
+/* .page--home sets display:flex for its own layout, but only while it is
+   also the active page - otherwise (equal specificity, declared later in
+   this file) it would permanently win over the two rules above and the
+   home page would stay visible - full height, sitting above whatever page
+   is actually active - underneath every other section. */
+.page--active.page--home { display: flex; }
 .page-enter { animation: pageIn 0.55s ease both; }
 @keyframes pageIn {
   from { opacity: 0; transform: translateY(14px); }
@@ -133,8 +139,8 @@ sup.cite a:hover { text-decoration: underline; }
 
 /* ---- landing / home page --------------------------------------------------- */
 .page--home {
-  position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-start;
-  padding: calc(var(--nav-h) + 20px) 24px 20px; overflow: hidden;
+  position: relative; min-height: 100vh; flex-direction: column; justify-content: flex-start;
+  padding: calc(var(--nav-h) + 26px) 24px 26px; overflow: hidden;
 }
 
 /* Cursor-follow spotlight: a faint evacuation-rate choropleth, hidden
@@ -152,30 +158,31 @@ sup.cite a:hover { text-decoration: underline; }
 }
 .bg-reveal.is-active { opacity: 0.4; }
 
-.hero { position: relative; z-index: 1; max-width: 760px; margin: 0 auto 22px; }
+.hero { position: relative; z-index: 1; max-width: 760px; margin: 0 auto 30px; }
 
-/* The question types itself in via js/core/typewriter.js (re-run every time
-   the home page is entered) - no fade-in animation of its own, so it isn't
-   fighting the typing motion. min-height reserves space so nothing jumps
-   as characters are added. */
-.hero-title { font-size: clamp(28px, 4.2vw, 44px); line-height: 1.14; margin: 0 0 14px; letter-spacing: -0.02em; min-height: 1.25em; }
+/* The whole hero block (title, subtitle, lede) types itself in as one
+   continuous sequence via js/core/typewriter.js's loopTypeSequence
+   (re-run every time the home page is entered) - no fade-in animation of
+   its own, so it isn't fighting the typing motion. min-height reserves
+   space at each element's final wrapped size so nothing reflows the tiles
+   below as characters are added. */
+.hero-title { font-size: clamp(28px, 4.2vw, 44px); line-height: 1.14; margin: 0 0 16px; letter-spacing: -0.02em; min-height: 1.25em; }
 .type-cursor { display: inline-block; width: 3px; height: 0.95em; margin-left: 2px; background: #fff; vertical-align: -0.1em; animation: blink 1s step-end infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* Subtitle/lede/CTA reveal only once the title has finished typing
-   (.hero.typing-done, set by js/app.js), staggered slightly. */
-.hero-subtitle, .hero-lede, .hero-cta { opacity: 0; }
-.hero-subtitle { font-size: 16px; line-height: 1.5; color: #d8d8d8; font-weight: 500; max-width: 660px; margin: 0 0 14px; transform: translateY(10px); }
-.hero.typing-done .hero-subtitle { animation: fadeUp 0.6s ease forwards; }
-.hero-lede { font-size: 14.5px; line-height: 1.55; color: #adadad; max-width: 640px; margin: 0 0 20px; transform: translateY(10px); }
-.hero.typing-done .hero-lede { animation: fadeUp 0.6s ease 0.12s forwards; }
+.hero-subtitle { font-size: 16px; line-height: 1.5; color: #d8d8d8; font-weight: 500; max-width: 660px; margin: 0 0 16px; min-height: 3em; }
+.hero-lede { font-size: 14.5px; line-height: 1.55; color: #adadad; max-width: 640px; margin: 0 0 26px; min-height: 4.65em; }
+
+/* The CTA stays a discrete button rather than typed text, so it still
+   fades up once the whole hero sequence finishes typing (.hero.typing-done,
+   set by js/app.js). */
 .hero-cta {
   display: inline-flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-size: 14px; font-weight: 600;
   padding: 12px 20px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 999px;
-  transform: translateY(10px);
+  opacity: 0; transform: translateY(10px);
   transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
-.hero.typing-done .hero-cta { animation: fadeUp 0.6s ease 0.24s forwards; }
+.hero.typing-done .hero-cta { animation: fadeUp 0.6s ease forwards; }
 .hero-cta:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.6); transform: translateY(-2px); }
 
 @keyframes fadeUp {
@@ -184,7 +191,7 @@ sup.cite a:hover { text-decoration: underline; }
 }
 
 .home-footer {
-  position: relative; z-index: 1; max-width: 1080px; margin: 16px auto 0; padding-top: 10px;
+  position: relative; z-index: 1; max-width: 1080px; margin: 24px auto 0; padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 11.5px; color: var(--muted-dim); line-height: 1.5;
 }
 .home-footer p { margin: 0 0 4px; }
@@ -192,9 +199,9 @@ sup.cite a:hover { text-decoration: underline; }
 .home-footer a:hover { text-decoration: underline; }
 .home-footer strong { color: var(--muted); }
 
-.page-grid { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.page-grid { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
 .page-tile {
-  position: relative; display: flex; flex-direction: column; gap: 3px; padding: 12px 14px; border-radius: 12px;
+  position: relative; display: flex; flex-direction: column; gap: 5px; padding: 15px 16px; border-radius: 12px;
   background: var(--card-bg); border: 1px solid var(--card-border); text-decoration: none;
   opacity: 0; transform: translateY(14px); animation: fadeUp 0.6s ease forwards;
   animation-delay: calc(0.4s + var(--i, 0) * 0.07s);
