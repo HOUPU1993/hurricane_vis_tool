@@ -1,50 +1,238 @@
-html, body { margin:0; padding:0; height:100%; font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
-#app { display:flex; height:100vh; }
-
-#sidebar {
-  width:340px; flex-shrink:0; padding:20px; box-sizing:border-box;
-  background:#000000; color:#f2f4f8; overflow-y:auto;
+/* ==========================================================================
+   Site shell - black background, white text, fixed nav, hash-routed pages.
+   ========================================================================== */
+:root {
+  --nav-h: 60px;
+  --bg: #000000;
+  --fg: #ffffff;
+  --muted: #9a9a9a;
+  --muted-dim: #7d7d7d;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 255, 255, 0.1);
 }
-#sidebar h1 { font-size:18px; margin:0 0 4px; }
-.subtitle { font-size:13px; color:#b7c0d8; margin:0 0 20px; line-height:1.4; }
 
-label { display:block; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; color:#8fa0c7; margin-bottom:6px; }
-select { width:100%; padding:8px; border-radius:6px; border:none; margin-bottom:20px; font-size:13px; }
+html, body {
+  margin: 0; padding: 0; min-height: 100%;
+  background: var(--bg); color: var(--fg);
+  font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  scroll-behavior: smooth;
+}
 
-#legend, #histogram, #detail-panel { background:rgba(255,255,255,0.06); border-radius:8px; padding:12px; margin-bottom:16px; font-size:12px; }
+* { box-sizing: border-box; }
 
-.legend-title { font-weight:600; margin-bottom:8px; }
-.legend-bar { height:12px; border-radius:6px; margin-bottom:6px; }
-.legend-ticks { display:flex; justify-content:space-between; font-size:11px; color:#b7c0d8; margin-bottom:6px; }
-.legend-note { font-size:10.5px; color:#8fa0c7; line-height:1.4; margin-bottom:8px; }
-.legend-nodata { display:flex; align-items:center; gap:6px; font-size:11px; color:#b7c0d8; }
-.legend-nodata .swatch { width:12px; height:12px; border-radius:3px; }
+/* ---- top nav --------------------------------------------------------- */
+#site-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; gap: 20px;
+  height: var(--nav-h); padding: 0 20px;
+  background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-x: auto;
+}
+#site-nav .brand {
+  color: #fff; text-decoration: none; font-weight: 600; font-size: 13.5px;
+  white-space: nowrap; flex-shrink: 0; opacity: 0.9;
+}
+#site-nav .brand:hover { opacity: 1; }
+#site-nav .nav-links { display: flex; gap: 2px; white-space: nowrap; }
+#site-nav .nav-links a {
+  color: var(--muted); text-decoration: none; font-size: 12.5px;
+  padding: 8px 11px; border-radius: 7px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+#site-nav .nav-links a:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+#site-nav .nav-links a.nav-link--active { color: #fff; background: rgba(255, 255, 255, 0.14); }
 
-#histogram svg { display:block; }
-.hist-clip-line { stroke: rgba(255,255,255,0.55); stroke-width:1; stroke-dasharray:2,2; }
-.hist-empty { color:#8fa0c7; font-size:12px; }
+/* ---- page switching + entrance animation ------------------------------ */
+.page { display: none; }
+.page--active { display: block; }
+.page-enter { animation: pageIn 0.55s ease both; }
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-#detail-panel .placeholder { color:#8fa0c7; margin:0; }
-#detail-panel h2 { margin:0 0 8px; font-size:14px; }
-#detail-panel details { border-top:1px solid rgba(255,255,255,0.12); padding:6px 0; }
-#detail-panel details:first-of-type { border-top:none; }
-#detail-panel summary { cursor:pointer; font-size:12.5px; font-weight:600; color:#dfe6f5; padding:4px 0; }
-.metric-row { display:flex; justify-content:space-between; gap:8px; font-size:12px; padding:3px 0; color:#e5eaf5; }
-.metric-row span:first-child { color:#b7c0d8; }
+.page-inner { max-width: 860px; margin: 0 auto; padding: calc(var(--nav-h) + 40px) 24px 100px; }
+.page-inner--wide { max-width: 1280px; }
 
-#map { flex:1; }
+.page-eyebrow { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-dim); margin: 0 0 10px; }
+.page-header { margin-bottom: 8px; }
+.page-header h2 { font-size: 32px; margin: 0 0 12px; letter-spacing: -0.01em; }
+.page-subtitle { font-size: 14.5px; color: var(--muted); line-height: 1.6; max-width: 680px; margin: 0 0 32px; }
+
+.page-inner h3 { font-size: 19px; margin: 40px 0 12px; color: #fff; }
+.page-inner p { font-size: 15px; line-height: 1.75; color: #d6d6d6; margin: 0 0 16px; }
+.page-inner a { color: #6da7ec; }
+.page-inner a:hover { color: #9ec5f4; }
+.page-inner strong { color: #fff; }
+sup.cite { line-height: 0; }
+sup.cite a { color: #6da7ec; text-decoration: none; font-size: 11px; }
+sup.cite a:hover { text-decoration: underline; }
+
+.placeholder { color: var(--muted); margin: 0; }
+
+/* ---- generic scroll-reveal --------------------------------------------- */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+
+/* ---- pull-quote --------------------------------------------------------- */
+.pull-quote {
+  border-left: 3px solid #2a78d6; padding: 16px 20px; margin: 28px 0;
+  background: rgba(255, 255, 255, 0.04); font-size: 17px; line-height: 1.6; color: #fff;
+}
+
+/* ---- research-question cards -------------------------------------------- */
+.rq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 20px 0 32px; }
+.rq-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 18px; }
+.rq-card .rq-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; color: #2a78d6; margin-bottom: 8px; }
+.rq-card p { font-size: 13.5px; color: #d6d6d6; margin: 0; line-height: 1.6; }
+
+/* ---- timeline (Page 1: government intervention) ------------------------ */
+.timeline { position: relative; margin: 24px 0 36px; padding-left: 28px; }
+.timeline::before {
+  content: ""; position: absolute; left: 6px; top: 4px; bottom: 4px; width: 2px;
+  background: rgba(255, 255, 255, 0.15);
+}
+.timeline-item { position: relative; padding-bottom: 26px; }
+.timeline-item:last-child { padding-bottom: 0; }
+.timeline-item::before {
+  content: ""; position: absolute; left: -28px; top: 4px; width: 12px; height: 12px; border-radius: 50%;
+  background: #2a78d6; box-shadow: 0 0 0 4px rgba(42, 120, 214, 0.25);
+}
+.timeline-item.timeline-landfall::before { background: #e34948; box-shadow: 0 0 0 4px rgba(227, 73, 72, 0.3); }
+.timeline-date { font-size: 12px; color: var(--muted-dim); text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 4px; }
+.timeline-title { font-size: 14.5px; font-weight: 600; color: #fff; margin: 0 0 4px; }
+.timeline-desc { font-size: 13.5px; color: #bdbdbd; line-height: 1.55; margin: 0; }
+
+/* ---- references ---------------------------------------------------------- */
+.references { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.12); }
+.references h3 { margin-top: 0; }
+.references ol { padding-left: 20px; margin: 0; }
+.references li { font-size: 12.5px; color: var(--muted); line-height: 1.7; margin-bottom: 10px; }
+.references li a { color: #6da7ec; word-break: break-word; }
+.references li a.archived { color: var(--muted-dim); font-size: 11.5px; margin-left: 2px; }
+
+/* ---- placeholder pages (2, 5, 6, 7) --------------------------------------- */
+.placeholder-page { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: 45vh; }
+.placeholder-badge {
+  display: inline-block; padding: 6px 14px; border-radius: 999px; border: 1px dashed rgba(255, 255, 255, 0.3);
+  font-size: 12px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px;
+}
+.placeholder-page p { max-width: 560px; }
+
+/* ---- landing / home page --------------------------------------------------- */
+.page--home { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--nav-h) + 20px) 24px 60px; }
+.hero { max-width: 760px; margin: 0 auto 56px; }
+.hero-eyebrow { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-dim); margin: 0 0 14px; opacity: 0; animation: fadeUp 0.7s ease 0.05s forwards; }
+.hero-title { font-size: clamp(32px, 5vw, 56px); line-height: 1.08; margin: 0 0 20px; letter-spacing: -0.02em; opacity: 0; animation: fadeUp 0.7s ease 0.15s forwards; }
+.hero-lede { font-size: 17px; line-height: 1.65; color: #cfcfcf; max-width: 640px; margin: 0 0 28px; opacity: 0; animation: fadeUp 0.7s ease 0.25s forwards; }
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-size: 14px; font-weight: 600;
+  padding: 12px 20px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 999px;
+  opacity: 0; animation: fadeUp 0.7s ease 0.35s forwards;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.hero-cta:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.6); transform: translateY(-2px); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-grid { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.page-tile {
+  position: relative; display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 14px;
+  background: var(--card-bg); border: 1px solid var(--card-border); text-decoration: none;
+  opacity: 0; transform: translateY(14px); animation: fadeUp 0.6s ease forwards;
+  animation-delay: calc(0.4s + var(--i, 0) * 0.07s);
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+.page-tile:hover { transform: translateY(-4px); border-color: var(--accent, #2a78d6); background: rgba(255, 255, 255, 0.07); }
+.page-tile::before {
+  content: ""; position: absolute; top: 0; left: 16px; right: 16px; height: 2px; border-radius: 2px;
+  background: var(--accent, #2a78d6); transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease;
+}
+.page-tile:hover::before { transform: scaleX(1); }
+.page-tile-num { font-size: 12px; color: var(--accent, #2a78d6); font-weight: 700; letter-spacing: 0.05em; }
+.page-tile-title { font-size: 15.5px; font-weight: 600; color: #fff; }
+.page-tile-desc { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
 
 @media (max-width: 700px) {
-  #app { flex-direction:column; }
-  #sidebar { width:100%; max-height:55vh; }
+  .page-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 460px) {
+  .page-grid { grid-template-columns: 1fr; }
 }
 
-/* Dark basemap: invert + hue-rotate the standard OSM tiles instead of
-   depending on a third-party dark-tile provider (which may start requiring
-   an API key, as CartoDB did). Only the tile pane is filtered - the
-   choropleth layer (.leaflet-overlay-pane) is untouched so its colors stay
-   correct. */
-/* Esri's Dark Gray Canvas tiles are already dark - no filter needed.
-   If you ever revert js/core/map.js to the OSM tile layer, restore this:
+/* ---- Page 4: study-area profile cards -------------------------------------- */
+.profile-category { margin-bottom: 40px; }
+.profile-category h3 {
+  font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cat-color, #fff); margin: 0 0 16px;
+  padding-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.profile-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-top: 3px solid var(--cat-color, #2a78d6);
+  border-radius: 10px; padding: 16px; transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.profile-card:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.3); }
+.profile-card h4 { font-size: 13px; margin: 0 0 12px; color: #fff; line-height: 1.4; min-height: 2.6em; }
+.profile-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin: 0; }
+.profile-stat dt { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: #8a8a8a; margin: 0; }
+.profile-stat dd { font-size: 13px; color: #f0f0f0; margin: 0 0 8px; font-variant-numeric: tabular-nums; }
+.profile-n { font-size: 11px; color: var(--muted-dim); margin: 10px 0 0; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 8px; }
+.profile-empty { font-size: 12px; color: var(--muted-dim); margin: 0; }
+
+/* ==========================================================================
+   Page 3 - the evacuation dashboard (map + sidebar). Fills the viewport
+   below the fixed nav; unlike the other pages it doesn't scroll as a whole -
+   the sidebar and map each manage their own internal scrolling.
+   ========================================================================== */
+#page-3 { padding-top: var(--nav-h); }
+#dashboard { display: flex; height: calc(100vh - var(--nav-h)); }
+
+#sidebar {
+  width: 340px; flex-shrink: 0; padding: 20px; box-sizing: border-box;
+  background: #000000; color: #f2f4f8; overflow-y: auto;
+}
+#sidebar h1 { font-size: 18px; margin: 0 0 4px; }
+.subtitle { font-size: 13px; color: #b7c0d8; margin: 0 0 20px; line-height: 1.4; }
+
+label { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #8fa0c7; margin-bottom: 6px; }
+select { width: 100%; padding: 8px; border-radius: 6px; border: none; margin-bottom: 20px; font-size: 13px; }
+
+#legend, #histogram, #detail-panel { background: rgba(255, 255, 255, 0.06); border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 12px; }
+
+.legend-title { font-weight: 600; margin-bottom: 8px; }
+.legend-bar { height: 12px; border-radius: 6px; margin-bottom: 6px; }
+.legend-ticks { display: flex; justify-content: space-between; font-size: 11px; color: #b7c0d8; margin-bottom: 6px; }
+.legend-note { font-size: 10.5px; color: #8fa0c7; line-height: 1.4; margin-bottom: 8px; }
+.legend-nodata { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #b7c0d8; }
+.legend-nodata .swatch { width: 12px; height: 12px; border-radius: 3px; }
+
+#histogram svg { display: block; }
+.hist-clip-line { stroke: rgba(255, 255, 255, 0.55); stroke-width: 1; stroke-dasharray: 2, 2; }
+.hist-empty { color: #8fa0c7; font-size: 12px; }
+
+#detail-panel .placeholder { color: #8fa0c7; margin: 0; }
+#detail-panel h2 { margin: 0 0 8px; font-size: 14px; }
+#detail-panel details { border-top: 1px solid rgba(255, 255, 255, 0.12); padding: 6px 0; }
+#detail-panel details:first-of-type { border-top: none; }
+#detail-panel summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: #dfe6f5; padding: 4px 0; }
+.metric-row { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; padding: 3px 0; color: #e5eaf5; }
+.metric-row span:first-child { color: #b7c0d8; }
+
+#map { flex: 1; }
+
+@media (max-width: 700px) {
+  #dashboard { flex-direction: column; }
+  #sidebar { width: 100%; max-height: 55vh; }
+}
+
+/* Dark basemap note: Esri's Dark Gray Canvas tiles (js/core/map.js) are
+   already dark, so no CSS filter is needed. If that basemap URL is ever
+   reverted to plain OSM tiles, restore this filter on the tile pane only -
+   the choropleth layer (.leaflet-overlay-pane) must stay unfiltered:
    .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9) saturate(0.85); } */
 .leaflet-container { background: #0b0f1a; }
