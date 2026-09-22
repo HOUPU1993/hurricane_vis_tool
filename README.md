@@ -76,6 +76,10 @@ Tagged milestones in this repo (`git tag -l`, `git checkout <tag>` to view,
 - `v1-dark-milestone` - dark Esri basemap, no CBG borders (hover-only shows
   a white outline), real block-group data, single blue hue for every
   metric, confidence-weighted opacity on evacuation metrics.
+- `v2-black-sidebar` (current default going forward) - each of the 10
+  metric categories has its own color hue, flat/consistent 0.85 fill
+  opacity across all metrics, `pct_disability` removed (all-null in
+  source), sidebar background is pure black.
 
 ## Running locally
 
