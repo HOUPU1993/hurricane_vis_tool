@@ -1,26 +1,60 @@
-// Types `text` into `el` one character at a time, then calls `onDone`. Used
-// for the homepage hero question - re-run every time the home page is
-// (re)entered (see js/app.js), so revisiting the landing page replays it.
-export function typeText(el, text, { speed = 34, onDone } = {}) {
-  if (!el) return;
+// Types `text` into `el`, holds it, deletes it, and retypes it - forever,
+// until stop() is called. Used for the homepage hero question: started on
+// every home-page visit and stopped the moment the visitor navigates away
+// (see js/app.js), so it never keeps ticking in the background.
+export function loopType(
+  el,
+  text,
+  { typeSpeed = 75, deleteSpeed = 38, holdMs = 2400, pauseMs = 600, onFirstComplete } = {}
+) {
+  if (!el) return { stop() {} };
 
-  el.textContent = "";
+  let stopped = false;
+  let timer = null;
+  let firstCompleteFired = false;
+
   const cursor = document.createElement("span");
   cursor.className = "type-cursor";
-  el.appendChild(cursor);
 
-  let i = 0;
-
-  function tick() {
-    i += 1;
+  function render(i) {
     el.textContent = text.slice(0, i);
     el.appendChild(cursor);
+  }
+
+  function schedule(fn, delay) {
+    timer = setTimeout(() => {
+      if (!stopped) fn();
+    }, delay);
+  }
+
+  function typeStep(i) {
+    render(i);
     if (i < text.length) {
-      setTimeout(tick, speed);
-    } else if (onDone) {
-      onDone();
+      schedule(() => typeStep(i + 1), typeSpeed);
+      return;
+    }
+    if (!firstCompleteFired) {
+      firstCompleteFired = true;
+      if (onFirstComplete) onFirstComplete();
+    }
+    schedule(() => deleteStep(text.length), holdMs);
+  }
+
+  function deleteStep(i) {
+    render(i);
+    if (i > 0) {
+      schedule(() => deleteStep(i - 1), deleteSpeed);
+    } else {
+      schedule(() => typeStep(0), pauseMs);
     }
   }
 
-  tick();
+  typeStep(0);
+
+  return {
+    stop() {
+      stopped = true;
+      if (timer) clearTimeout(timer);
+    },
+  };
 }

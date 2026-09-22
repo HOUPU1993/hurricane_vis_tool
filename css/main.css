@@ -36,7 +36,7 @@ html, body {
   white-space: nowrap; flex-shrink: 0; opacity: 0.9;
 }
 #site-nav .brand:hover { opacity: 1; }
-.brand-logo { width: 22px; height: 22px; object-fit: contain; border-radius: 5px; flex-shrink: 0; }
+.brand-logo { width: 28px; height: 28px; object-fit: contain; border-radius: 6px; flex-shrink: 0; }
 #site-nav .nav-links { display: flex; gap: 2px; white-space: nowrap; }
 #site-nav .nav-links a {
   color: var(--muted); text-decoration: none; font-size: 12.5px;
@@ -132,7 +132,10 @@ sup.cite a:hover { text-decoration: underline; }
 .placeholder-page p { max-width: 560px; }
 
 /* ---- landing / home page --------------------------------------------------- */
-.page--home { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--nav-h) + 20px) 24px 60px; overflow: hidden; }
+.page--home {
+  position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-start;
+  padding: calc(var(--nav-h) + 20px) 24px 20px; overflow: hidden;
+}
 
 /* Cursor-follow spotlight: a faint evacuation-rate choropleth, hidden
    everywhere except a soft circle around the pointer. Starts fully
@@ -149,24 +152,22 @@ sup.cite a:hover { text-decoration: underline; }
 }
 .bg-reveal.is-active { opacity: 0.4; }
 
-.hero { position: relative; z-index: 1; max-width: 760px; margin: 0 auto 56px; }
-.hero-logo { width: 52px; height: 52px; object-fit: contain; margin-bottom: 20px; opacity: 0; animation: fadeUp 0.7s ease 0s forwards; }
-.hero-eyebrow { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-dim); margin: 0 0 14px; opacity: 0; animation: fadeUp 0.7s ease 0.08s forwards; }
+.hero { position: relative; z-index: 1; max-width: 760px; margin: 0 auto 22px; }
 
 /* The question types itself in via js/core/typewriter.js (re-run every time
    the home page is entered) - no fade-in animation of its own, so it isn't
    fighting the typing motion. min-height reserves space so nothing jumps
    as characters are added. */
-.hero-title { font-size: clamp(30px, 4.6vw, 50px); line-height: 1.12; margin: 0 0 16px; letter-spacing: -0.02em; min-height: 1.25em; }
+.hero-title { font-size: clamp(28px, 4.2vw, 44px); line-height: 1.14; margin: 0 0 14px; letter-spacing: -0.02em; min-height: 1.25em; }
 .type-cursor { display: inline-block; width: 3px; height: 0.95em; margin-left: 2px; background: #fff; vertical-align: -0.1em; animation: blink 1s step-end infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
 /* Subtitle/lede/CTA reveal only once the title has finished typing
    (.hero.typing-done, set by js/app.js), staggered slightly. */
 .hero-subtitle, .hero-lede, .hero-cta { opacity: 0; }
-.hero-subtitle { font-size: 17px; line-height: 1.55; color: #d8d8d8; font-weight: 500; max-width: 660px; margin: 0 0 20px; transform: translateY(10px); }
+.hero-subtitle { font-size: 16px; line-height: 1.5; color: #d8d8d8; font-weight: 500; max-width: 660px; margin: 0 0 14px; transform: translateY(10px); }
 .hero.typing-done .hero-subtitle { animation: fadeUp 0.6s ease forwards; }
-.hero-lede { font-size: 15.5px; line-height: 1.65; color: #adadad; max-width: 640px; margin: 0 0 28px; transform: translateY(10px); }
+.hero-lede { font-size: 14.5px; line-height: 1.55; color: #adadad; max-width: 640px; margin: 0 0 20px; transform: translateY(10px); }
 .hero.typing-done .hero-lede { animation: fadeUp 0.6s ease 0.12s forwards; }
 .hero-cta {
   display: inline-flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-size: 14px; font-weight: 600;
@@ -183,17 +184,17 @@ sup.cite a:hover { text-decoration: underline; }
 }
 
 .home-footer {
-  position: relative; z-index: 1; max-width: 1080px; margin: 56px auto 0; padding-top: 22px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 12px; color: var(--muted-dim); line-height: 1.7;
+  position: relative; z-index: 1; max-width: 1080px; margin: 16px auto 0; padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 11.5px; color: var(--muted-dim); line-height: 1.5;
 }
 .home-footer p { margin: 0 0 4px; }
 .home-footer a { color: #6da7ec; text-decoration: none; }
 .home-footer a:hover { text-decoration: underline; }
 .home-footer strong { color: var(--muted); }
 
-.page-grid { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.page-grid { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
 .page-tile {
-  position: relative; display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 14px;
+  position: relative; display: flex; flex-direction: column; gap: 3px; padding: 12px 14px; border-radius: 12px;
   background: var(--card-bg); border: 1px solid var(--card-border); text-decoration: none;
   opacity: 0; transform: translateY(14px); animation: fadeUp 0.6s ease forwards;
   animation-delay: calc(0.4s + var(--i, 0) * 0.07s);
