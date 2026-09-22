@@ -10,8 +10,12 @@
 <body>
 
 <nav id="site-nav">
-  <a class="brand" href="#/home" data-nav-link="home">Hurricane Ian Evacuation Study</a>
+  <a class="brand" href="#/home">
+    <img class="brand-logo" src="assets/logo.png" alt="" />
+    <span>Hurricane Ian Evacuation Study</span>
+  </a>
   <div class="nav-links">
+    <a href="#/home" data-nav-link="home">Home</a>
     <a href="#/1" data-nav-link="1">01 Background</a>
     <a href="#/2" data-nav-link="2">02 Data &amp; Methods</a>
     <a href="#/3" data-nav-link="3">03 Visualization</a>
@@ -28,9 +32,16 @@
 <!-- Home / landing                                                     -->
 <!-- ================================================================== -->
 <section id="page-home" class="page page--home">
+  <div class="bg-reveal" aria-hidden="true"></div>
+
   <div class="hero">
+    <img class="hero-logo" src="assets/logo.png" alt="" />
     <p class="hero-eyebrow">Hurricane Ian &middot; Evacuation Study</p>
-    <h1 class="hero-title">Why didn't everyone leave?</h1>
+    <h1 class="hero-title" id="hero-title" aria-live="polite">Does Place Keep People Home?</h1>
+    <p class="hero-subtitle">
+      The Influence of Social and Material Dimensions of Place Attachment in Hurricane Evacuation
+      Compliance under Mandatory Evacuation Orders
+    </p>
     <p class="hero-lede">
       We use large-scale mobile phone data to detect who evacuated ahead of Hurricane Ian's landfall
       in Southwest Florida, and test whether place attachment &mdash; protecting a mortgaged home, or
@@ -77,6 +88,13 @@
       <span class="page-tile-desc">Open questions and future work</span>
     </a>
   </nav>
+
+  <footer class="home-footer reveal">
+    <p><strong>License:</strong> Created and owned by
+      <a href="https://www.urbandataresearchlab.org/" target="_blank" rel="noopener">Urban Data Research Lab</a>.</p>
+    <p>Author: Houpu Li (<a href="mailto:houpu_li@ucsb.edu">houpu_li@ucsb.edu</a>) &middot;
+      Advisor: Wenfei Xu (<a href="mailto:wenfeixu@ucsb.edu">wenfeixu@ucsb.edu</a>)</p>
+  </footer>
 </section>
 
 <!-- ================================================================== -->

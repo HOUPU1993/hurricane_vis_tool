@@ -31,10 +31,12 @@ html, body {
   overflow-x: auto;
 }
 #site-nav .brand {
+  display: flex; align-items: center; gap: 8px;
   color: #fff; text-decoration: none; font-weight: 600; font-size: 13.5px;
   white-space: nowrap; flex-shrink: 0; opacity: 0.9;
 }
 #site-nav .brand:hover { opacity: 1; }
+.brand-logo { width: 22px; height: 22px; object-fit: contain; border-radius: 5px; flex-shrink: 0; }
 #site-nav .nav-links { display: flex; gap: 2px; white-space: nowrap; }
 #site-nav .nav-links a {
   color: var(--muted); text-decoration: none; font-size: 12.5px;
@@ -51,6 +53,14 @@ html, body {
 @keyframes pageIn {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }
+}
+/* Fired by router.js on internal link clicks, briefly, before the hash
+   actually changes - makes navigating away from a page read as a
+   deliberate jump rather than content quietly swapping underneath you. */
+.page-leaving { animation: pageOut 0.2s ease both; }
+@keyframes pageOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
 }
 
 .page-inner { max-width: 860px; margin: 0 auto; padding: calc(var(--nav-h) + 40px) 24px 100px; }
@@ -122,17 +132,49 @@ sup.cite a:hover { text-decoration: underline; }
 .placeholder-page p { max-width: 560px; }
 
 /* ---- landing / home page --------------------------------------------------- */
-.page--home { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--nav-h) + 20px) 24px 60px; }
-.hero { max-width: 760px; margin: 0 auto 56px; }
-.hero-eyebrow { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-dim); margin: 0 0 14px; opacity: 0; animation: fadeUp 0.7s ease 0.05s forwards; }
-.hero-title { font-size: clamp(32px, 5vw, 56px); line-height: 1.08; margin: 0 0 20px; letter-spacing: -0.02em; opacity: 0; animation: fadeUp 0.7s ease 0.15s forwards; }
-.hero-lede { font-size: 17px; line-height: 1.65; color: #cfcfcf; max-width: 640px; margin: 0 0 28px; opacity: 0; animation: fadeUp 0.7s ease 0.25s forwards; }
+.page--home { position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--nav-h) + 20px) 24px 60px; overflow: hidden; }
+
+/* Cursor-follow spotlight: a faint evacuation-rate choropleth, hidden
+   everywhere except a soft circle around the pointer. Starts fully
+   transparent (opacity 0) so it never flashes before the pointer moves;
+   js/core/spotlight.js adds .is-active and updates --mx/--my. Never
+   dominant - low opacity, small radius, sits behind all hero content. */
+.bg-reveal {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: #000 url("../assets/evac-rate-bg.svg") center/cover no-repeat;
+  opacity: 0;
+  -webkit-mask-image: radial-gradient(circle 230px at var(--mx, -9999px) var(--my, -9999px), black 0%, black 55%, transparent 100%);
+  mask-image: radial-gradient(circle 230px at var(--mx, -9999px) var(--my, -9999px), black 0%, black 55%, transparent 100%);
+  transition: opacity 0.4s ease;
+}
+.bg-reveal.is-active { opacity: 0.4; }
+
+.hero { position: relative; z-index: 1; max-width: 760px; margin: 0 auto 56px; }
+.hero-logo { width: 52px; height: 52px; object-fit: contain; margin-bottom: 20px; opacity: 0; animation: fadeUp 0.7s ease 0s forwards; }
+.hero-eyebrow { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-dim); margin: 0 0 14px; opacity: 0; animation: fadeUp 0.7s ease 0.08s forwards; }
+
+/* The question types itself in via js/core/typewriter.js (re-run every time
+   the home page is entered) - no fade-in animation of its own, so it isn't
+   fighting the typing motion. min-height reserves space so nothing jumps
+   as characters are added. */
+.hero-title { font-size: clamp(30px, 4.6vw, 50px); line-height: 1.12; margin: 0 0 16px; letter-spacing: -0.02em; min-height: 1.25em; }
+.type-cursor { display: inline-block; width: 3px; height: 0.95em; margin-left: 2px; background: #fff; vertical-align: -0.1em; animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Subtitle/lede/CTA reveal only once the title has finished typing
+   (.hero.typing-done, set by js/app.js), staggered slightly. */
+.hero-subtitle, .hero-lede, .hero-cta { opacity: 0; }
+.hero-subtitle { font-size: 17px; line-height: 1.55; color: #d8d8d8; font-weight: 500; max-width: 660px; margin: 0 0 20px; transform: translateY(10px); }
+.hero.typing-done .hero-subtitle { animation: fadeUp 0.6s ease forwards; }
+.hero-lede { font-size: 15.5px; line-height: 1.65; color: #adadad; max-width: 640px; margin: 0 0 28px; transform: translateY(10px); }
+.hero.typing-done .hero-lede { animation: fadeUp 0.6s ease 0.12s forwards; }
 .hero-cta {
   display: inline-flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-size: 14px; font-weight: 600;
   padding: 12px 20px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 999px;
-  opacity: 0; animation: fadeUp 0.7s ease 0.35s forwards;
+  transform: translateY(10px);
   transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
+.hero.typing-done .hero-cta { animation: fadeUp 0.6s ease 0.24s forwards; }
 .hero-cta:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.6); transform: translateY(-2px); }
 
 @keyframes fadeUp {
@@ -140,7 +182,16 @@ sup.cite a:hover { text-decoration: underline; }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.page-grid { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.home-footer {
+  position: relative; z-index: 1; max-width: 1080px; margin: 56px auto 0; padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 12px; color: var(--muted-dim); line-height: 1.7;
+}
+.home-footer p { margin: 0 0 4px; }
+.home-footer a { color: #6da7ec; text-decoration: none; }
+.home-footer a:hover { text-decoration: underline; }
+.home-footer strong { color: var(--muted); }
+
+.page-grid { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
 .page-tile {
   position: relative; display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 14px;
   background: var(--card-bg); border: 1px solid var(--card-border); text-decoration: none;
