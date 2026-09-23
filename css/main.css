@@ -78,6 +78,7 @@ html, body {
 .page-subtitle { font-size: 14.5px; color: var(--muted); line-height: 1.6; max-width: 680px; margin: 0 0 32px; }
 
 .page-inner h3 { font-size: 19px; margin: 40px 0 12px; color: #fff; }
+.page-inner h4 { font-size: 16px; margin: 28px 0 10px; color: #fff; font-weight: 600; }
 .page-inner p { font-size: 15px; line-height: 1.75; color: #d6d6d6; margin: 0 0 16px; }
 .page-inner a { color: #6da7ec; }
 .page-inner a:hover { color: #9ec5f4; }
@@ -93,10 +94,14 @@ sup.cite a:hover { text-decoration: underline; }
 .reveal.in-view { opacity: 1; transform: translateY(0); }
 
 /* ---- pull-quote --------------------------------------------------------- */
+/* Deliberately breaks from the site's sans-serif body copy - a serif
+   display face (loaded in index.html's <head>) reads more like an actual
+   quotation than another paragraph of UI text. */
 .pull-quote {
-  border-left: 3px solid #2a78d6; padding: 18px 22px; margin: 32px 0;
-  background: rgba(255, 255, 255, 0.04); font-size: 21px; font-style: italic;
-  line-height: 1.55; color: #fff;
+  border-left: 3px solid #2a78d6; padding: 20px 24px; margin: 32px 0;
+  background: rgba(255, 255, 255, 0.04); font-family: "Lora", Georgia, serif;
+  font-size: 26px; font-weight: 700; font-style: italic;
+  line-height: 1.5; color: #fff;
 }
 
 /* ---- research-question cards -------------------------------------------- */
@@ -129,6 +134,55 @@ sup.cite a:hover { text-decoration: underline; }
 /* Plain APA-style text - no links, so URLs/DOIs just wrap as regular text
    in the same muted color as the rest of the entry. */
 .references li { font-size: 12.5px; color: var(--muted); line-height: 1.7; margin-bottom: 10px; word-break: break-word; }
+
+/* ---- callout / documentation-status note box (Page 2) -------------------- */
+.note-box {
+  border-left: 3px solid #eb6834; padding: 14px 18px; margin: 20px 0 28px;
+  background: rgba(235, 104, 52, 0.07); border-radius: 0 8px 8px 0;
+}
+.note-box p { font-size: 13.5px; font-style: italic; color: #cfcfcf; line-height: 1.6; margin: 0; }
+.note-box strong { color: #eb6834; font-style: normal; }
+
+/* ---- data tables (Page 2) -------------------------------------------------- */
+.table-wrap { overflow-x: auto; margin: 16px 0 8px; border: 1px solid var(--card-border); border-radius: 10px; }
+.data-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+.data-table th, .data-table td {
+  text-align: left; padding: 10px 14px; font-size: 13px; line-height: 1.55;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08); vertical-align: top;
+}
+.data-table th {
+  font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700;
+  color: #eb6834; background: rgba(235, 104, 52, 0.08); white-space: nowrap;
+}
+.data-table td { color: #c8c8c8; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table--compact th, .data-table--compact td { font-size: 12px; padding: 8px 12px; }
+.data-table--compact td:first-child { color: var(--muted-dim); }
+.table-source { font-size: 12px; color: var(--muted-dim); line-height: 1.6; margin: 0 0 32px; }
+.table-source a { word-break: break-word; }
+
+/* ---- methodology framework summary (Page 2) ------------------------------- */
+/* Replaces a static exported diagram: a diagram rendered for a white page
+   would fight the site's black background, so the six steps are instead
+   summarized as cards in the same visual language as the RQ cards above. */
+.framework-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 20px 0 12px;
+}
+.framework-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 18px; }
+.framework-card .framework-num {
+  display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px;
+  border-radius: 50%; background: rgba(235, 104, 52, 0.15); color: #eb6834;
+  font-size: 11.5px; font-weight: 700; margin-bottom: 10px;
+}
+.framework-card h4 { font-size: 14.5px; font-weight: 600; color: #fff; margin: 0 0 8px; }
+.framework-card ul { margin: 0; padding-left: 16px; }
+.framework-card li { font-size: 12.5px; color: #bdbdbd; line-height: 1.55; margin-bottom: 4px; }
+.framework-card li:last-child { margin-bottom: 0; }
+.framework-caption { font-size: 12px; color: var(--muted-dim); line-height: 1.6; margin: 4px 0 0; }
+
+/* KaTeX inherits color from its surrounding paragraph rather than forcing
+   black, but display-mode equations get their own breathing room. */
+.katex-display { margin: 20px 0; overflow-x: auto; overflow-y: hidden; }
 
 /* ---- placeholder pages (2, 5, 6, 7) --------------------------------------- */
 .placeholder-page { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: 45vh; }

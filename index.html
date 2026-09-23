@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hurricane Ian Evacuation Study</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
@@ -288,16 +292,448 @@
 <!-- Page 2 - Data & Methodology (placeholder)                           -->
 <!-- ================================================================== -->
 <section id="page-2" class="page">
-  <div class="page-inner">
+  <div class="page-inner page-inner--wide">
     <header class="page-header">
       <p class="page-eyebrow">02</p>
       <h2>Data Used and Methodology</h2>
     </header>
-    <div class="placeholder-page">
-      <span class="placeholder-badge">In progress</span>
-      <p>Data sources, the mobile-phone evacuation-detection method, and the modeling approach are
-        being written up and will be added here.</p>
+
+    <h3 class="reveal">Data used</h3>
+    <p class="reveal">
+      This study combines mobile-device stop records, property data, census-based community
+      characteristics, and voter-registration information to examine evacuation behavior during
+      Hurricane Ian and its association with place attachment. Cuebiq's <strong>Stop by Event Date
+      Uplevelled</strong> data provide the mobility observations used to detect departures from
+      routine activity patterns and subsequent returns. Infutor property data support the
+      characterization of housing and mortgage-related conditions, while American Community Survey
+      (ACS) data describe socioeconomic, demographic, and housing characteristics.
+      Voter-registration data provide measures of community political composition. The mobility
+      analysis focuses on devices assigned to home census block groups (CBGs) included in the
+      study's mandatory-evacuation-zone crosswalk. Device-level mobility outcomes are summarized by
+      home CBG to support comparison with community characteristics.
+    </p>
+
+    <div class="note-box reveal">
+      <p><strong>Documentation status:</strong> the ACS vintage and estimate product, Infutor
+        extract date and fields, and the precise voter-data provenance remain to be confirmed. The
+        supplied notebook documents evacuation detection; it does not establish property-record
+        linkage, insurance coverage, social-network construction, or regression specifications.</p>
     </div>
+
+    <h4 class="reveal">Table 1. Data sources and analytical roles</h4>
+    <div class="table-wrap reveal">
+      <table class="data-table">
+        <thead>
+          <tr><th>Data source</th><th>Dataset / information</th><th>Unit and temporal coverage</th><th>Role in the study</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cuebiq</td>
+            <td>Stop by Event Date Uplevelled; stop coordinates, timing, dwell duration, accuracy, and device identifiers</td>
+            <td>Device&ndash;stop records; September 2&ndash;October 23, 2022</td>
+            <td>Construct daily activity centers; detect persistent spatial unfamiliarity; estimate departure, return, and home-to-destination distance. Current parameters retain SIERRA and LIMA records, including uplevelled stops.</td>
+          </tr>
+          <tr>
+            <td>Cuebiq</td>
+            <td>Recurring home-area information (<code>DEVICE_RECURRING_AREA</code>, used in the resident-qualification table)</td>
+            <td>Device&ndash;home-CBG assignment during the baseline period</td>
+            <td>Identify the target resident sample. The repository describes residence in a target CBG on at least 5 baseline days.</td>
+          </tr>
+          <tr>
+            <td>Infutor</td>
+            <td>Property data</td>
+            <td>Property records; extract vintage and selected fields to be documented</td>
+            <td>Characterize property and mortgage-related conditions relevant to material place attachment. Exact measures and aggregation/linkage rules require the property-processing code.</td>
+          </tr>
+          <tr>
+            <td>U.S. Census Bureau</td>
+            <td>American Community Survey detailed tables</td>
+            <td>Census statistical areas; year, 1-year/5-year product, and geography vintage to be confirmed</td>
+            <td>Construct socioeconomic, demographic, housing, and internet-access covariates. See Table 2.</td>
+          </tr>
+          <tr>
+            <td>Voter-registration data</td>
+            <td>User identifies Florida Division of Elections; the supplied link identifies a <strong>2021 L2 voter file aggregated to 2010 census blocks</strong>, distributed by Redistricting Data Hub</td>
+            <td>Registered voters aggregated geographically; 2021 for the linked product</td>
+            <td>Calculate Republican and Democratic registration shares. Confirm whether the analysis uses the L2/RDH product, a direct Division of Elections extract, or both.</td>
+          </tr>
+          <tr>
+            <td>Mandatory-evacuation-zone / CBG crosswalk</td>
+            <td><code>HURRICANE_IAN_MANDATORY_CBG_CROSS</code></td>
+            <td>Target CBGs associated with Hurricane Ian mandatory evacuation zones</td>
+            <td>Define the study geography. Original zone-boundary source, order dates, and CBG inclusion rule should be documented.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-source reveal">Sources:
+      <a href="https://github.com/HOUPU1993/hurricane_ian_evacuation_detection" target="_blank" rel="noopener">evacuation-detection repository</a>,
+      <a href="https://github.com/HOUPU1993/hurricane_ian_evacuation_detection/blob/207ae0f454743da2ac5cbccbb2498c5fa06d5714/PARAMETERS.sql" target="_blank" rel="noopener">current parameters</a>,
+      <a href="https://data.census.gov/" target="_blank" rel="noopener">ACS tables</a>, and
+      <a href="https://redistrictingdatahub.org/dataset/2021-florida-l2-voter-file-aggregated-to-2010-census-blocks/" target="_blank" rel="noopener">linked L2/RDH dataset</a>.
+      RDH's <a href="https://redistrictingdatahub.org/state/florida/" target="_blank" rel="noopener">Florida catalogue</a>
+      identifies L2 as the source of the relevant voter-file products.</p>
+
+    <h4 class="reveal">Table 2. Sociodemographic variables and additional community controls</h4>
+    <p class="reveal">The weight names below reproduce the supplied project specification. They have
+      <strong>not</strong> been verified against a weighting or geographic-crosswalk implementation
+      and should not be described as ACS survey weights without further documentation.</p>
+    <div class="table-wrap reveal">
+      <table class="data-table data-table--compact">
+        <thead>
+          <tr><th>No.</th><th>Variable</th><th>Definition / denominator</th><th>Data source</th><th>Specified weight</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td><td>Household income quantile</td>
+            <td>Derived from the household income distribution; quantile cut points, reference population, and estimation procedure must be specified</td>
+            <td><a href="https://data.census.gov/table?q=B19001" target="_blank" rel="noopener">ACS B19001 &mdash; Household Income in the Past 12 Months</a></td>
+            <td><code>wt_hh</code></td>
+          </tr>
+          <tr>
+            <td>2</td><td>Average household size</td>
+            <td>Population in occupied housing units divided by occupied housing units</td>
+            <td><a href="https://data.census.gov/table?q=B25008" target="_blank" rel="noopener">ACS B25008</a>; <a href="https://data.census.gov/table?q=B25003" target="_blank" rel="noopener">B25003 &mdash; Tenure</a></td>
+            <td>Numerator: <code>wt_hh</code>; denominator: <code>wt_ownhu + wt_renthu</code> <strong>(verify numerator weight)</strong></td>
+          </tr>
+          <tr>
+            <td>3</td><td>Share of residents with a disability</td>
+            <td>Civilian noninstitutionalized residents with a disability divided by the civilian noninstitutionalized population</td>
+            <td><a href="https://data.census.gov/table?q=B18101" target="_blank" rel="noopener">ACS B18101 &mdash; Sex by Age by Disability Status</a></td>
+            <td><code>wt_pop</code></td>
+          </tr>
+          <tr>
+            <td>4</td><td>Share of residents aged 65 or older</td>
+            <td>Residents aged 65+ divided by total population</td>
+            <td><a href="https://data.census.gov/table?q=B01001" target="_blank" rel="noopener">ACS B01001 &mdash; Sex by Age</a></td>
+            <td><code>wt_pop</code></td>
+          </tr>
+          <tr>
+            <td>5</td><td>Share of households with people under age 18</td>
+            <td>Households containing at least one person under 18 divided by total households</td>
+            <td><a href="https://data.census.gov/table?q=B11005" target="_blank" rel="noopener">ACS B11005</a></td>
+            <td><code>wt_hh</code></td>
+          </tr>
+          <tr>
+            <td>6</td><td>Share of households with at least one vehicle available</td>
+            <td>Occupied housing units with one or more vehicles available divided by occupied housing units</td>
+            <td><a href="https://data.census.gov/table?q=B25044" target="_blank" rel="noopener">ACS B25044 &mdash; Tenure by Vehicles Available</a></td>
+            <td><code>wt_hh</code></td>
+          </tr>
+          <tr>
+            <td>7</td><td>Racial and ethnic composition</td>
+            <td>Population shares for Black, Hispanic/Latino, and other specified groups; use non-Hispanic racial categories if shares are intended to be mutually exclusive</td>
+            <td><a href="https://data.census.gov/table?q=B03002" target="_blank" rel="noopener">ACS B03002 &mdash; Hispanic or Latino Origin by Race</a></td>
+            <td><code>wt_pop</code></td>
+          </tr>
+          <tr>
+            <td>8</td><td>Homeownership rate</td>
+            <td>Owner-occupied housing units divided by all occupied housing units</td>
+            <td><a href="https://data.census.gov/table?q=B25003" target="_blank" rel="noopener">ACS B25003 &mdash; Tenure</a></td>
+            <td><code>wt_ownhu + wt_renthu</code></td>
+          </tr>
+          <tr>
+            <td>9</td><td>Share of mobile homes</td>
+            <td>Mobile-home housing units divided by all housing units</td>
+            <td><a href="https://data.census.gov/table?q=B25024" target="_blank" rel="noopener">ACS B25024 &mdash; Units in Structure</a></td>
+            <td><code>wt_hu</code></td>
+          </tr>
+          <tr>
+            <td>10</td><td>Share of adults with a bachelor's degree or higher</td>
+            <td>Residents aged 25+ with a bachelor's, master's, professional, or doctoral degree divided by residents aged 25+</td>
+            <td><a href="https://data.census.gov/table?q=B15003" target="_blank" rel="noopener">ACS B15003 &mdash; Educational Attainment for the Population 25 Years and Over</a></td>
+            <td><code>wt_adult</code> <strong>(verify age-25+ basis)</strong></td>
+          </tr>
+          <tr>
+            <td>11</td><td>Broadband subscription rate</td>
+            <td>Households with a broadband internet subscription divided by total households</td>
+            <td><a href="https://data.census.gov/table?q=B28002" target="_blank" rel="noopener">ACS B28002 &mdash; Presence and Types of Internet Subscriptions in Household</a></td>
+            <td><code>wt_hh</code></td>
+          </tr>
+          <tr>
+            <td>12</td><td>Share of single-family housing units</td>
+            <td>One-unit detached and one-unit attached housing units divided by all housing units; confirm whether the implemented measure includes both</td>
+            <td><a href="https://data.census.gov/table?q=B25024" target="_blank" rel="noopener">ACS B25024 &mdash; Units in Structure</a></td>
+            <td><code>wt_hu</code></td>
+          </tr>
+          <tr>
+            <td>13</td><td>Population density</td>
+            <td>Total population divided by study-area size in square kilometers (<code>tot_pop / area_sqkm</code>); document land-area versus total-area convention</td>
+            <td>Population count and geographic boundary area; exact population source to be confirmed</td>
+            <td>Not supplied; calculate after harmonizing counts and area</td>
+          </tr>
+          <tr>
+            <td>14</td><td>Political composition</td>
+            <td>Republican and Democratic registrations, each divided by total registered voters</td>
+            <td><a href="https://redistrictingdatahub.org/dataset/2021-florida-l2-voter-file-aggregated-to-2010-census-blocks/" target="_blank" rel="noopener">2021 Florida L2 voter file aggregated to 2010 census blocks &mdash; RDH</a>; reconcile with the stated Florida Division of Elections source</td>
+            <td>Not supplied; aggregate registration counts before forming shares</td>
+          </tr>
+          <tr>
+            <td>15</td><td>Severe owner housing-cost burden</td>
+            <td>Owner-occupied households spending at least 50% of income on selected monthly owner costs; document whether the denominator covers all owners or mortgage holders only, and treatment of &ldquo;not computed&rdquo; cases</td>
+            <td><a href="https://data.census.gov/table?q=B25091" target="_blank" rel="noopener">ACS B25091 &mdash; Mortgage Status by Selected Monthly Owner Costs as a Percentage of Household Income</a></td>
+            <td><code>wt_ownhu</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="reveal">
+      B18101 is a person-level disability table, so it cannot directly measure the share of
+      <strong>households</strong> containing someone with a disability. B25044 measures vehicle
+      <strong>availability</strong>, not legal vehicle ownership. The relevant table definitions are
+      available in the Census Bureau's
+      <a href="https://api.census.gov/data/2024/acs/acs5/groups/B18101.html" target="_blank" rel="noopener">B18101 metadata</a>,
+      <a href="https://www2.census.gov/about/training-workshops/2023/2023-05-25-disability-presentation.pdf" target="_blank" rel="noopener">disability documentation</a>, and
+      <a href="https://api.census.gov/data/2024/acs/acs5/groups/B25044.html" target="_blank" rel="noopener">B25044 metadata</a>.
+      These 2024 metadata links verify definitions, not the vintage used by this study.
+    </p>
+    <p class="reveal">
+      If the project weights are geographic allocation factors, harmonize the relevant counts to
+      the target geography before calculating proportions or ratios. Do not average source-area
+      percentages or quantile labels directly. Confirm that the numerator and denominator weights
+      reflect their respective populations. Record the crosswalk source and source/target boundary
+      vintages.
+    </p>
+
+    <h3 class="reveal">Methodology: evacuation detection</h3>
+    <p class="reveal">
+      We identify candidate evacuations as sustained departures from each device's usual activity
+      pattern. After removing duplicate records, reconciling overlapping stop intervals, and
+      screening for sufficient observation coverage, we summarize each eligible day using a
+      dwell-time-weighted geographic activity center. For each day during and after the evacuation
+      window, we measure spatial unfamiliarity as the average distance to the device's three
+      nearest baseline daily centers. A day is classified as unfamiliar when this score exceeds the
+      device's maximum leave-one-out baseline score. Candidate evacuations require at least two
+      observed unfamiliar days in a gap-tolerant sequence that meets the September 29 persistence
+      check, together with an estimated home inside a rough Florida bounding box. Missing
+      observations can bridge up to two days but never count as evidence of unfamiliarity. We then
+      identify sustained returns to familiar activity patterns and estimate home-to-destination
+      distances from nighttime stop clusters. Device-level results are summarized by home census
+      block group to describe spatial variation in detected evacuation behavior.
+    </p>
+
+    <h4 class="reveal">1. Observation windows and resident cohort</h4>
+    <p class="reveal">
+      The observation period runs from <strong>September 2 to October 23, 2022</strong>. It is
+      divided into a baseline period (September 2&ndash;22), an evacuation-detection window
+      (September 23&ndash;30), and a return-detection window (October 1&ndash;23). The separate
+      persistence checkpoint is September 29. Target residents are drawn from the recurring-home-area
+      qualification table; the repository specifies a home detected in a target CBG on at least five
+      baseline days. Target CBGs are those included in the mandatory-evacuation-zone crosswalk,
+      rather than all CBGs in affected counties.
+    </p>
+
+    <h4 class="reveal">2. Stop preprocessing and observation quality</h4>
+    <p class="reveal">
+      We first remove duplicate stop segments. For each device and event date, overlapping or
+      touching intervals within the same geohash8 cell are merged into a time union, so overlapping
+      minutes are not counted twice. If intervals at different locations still overlap, their
+      boundaries divide the timeline into smaller intervals; each disputed interval is assigned to
+      the location with the smallest available <code>avg_accuracy_meters</code>. Non-conflicting
+      portions of competing records are retained, and adjacent intervals assigned to the same
+      original location are merged again. Dwell duration is recomputed from the resolved intervals.
+      A user-day is eligible when it contains at least <strong>120 minutes</strong> of uniquely
+      covered stop time, spans at least <strong>240 minutes</strong> from its earliest stop start to
+      its latest stop end, and has no remaining overlapping segments. Devices must have at least
+      <strong>14 eligible baseline days</strong> and <strong>3 eligible evacuation-window days</strong>.
+      User-day eligibility assesses observation coverage, not whether the device remains in a stable
+      location. These day-level and device-level rules produce the analytical mobility cohort; days
+      with missing or insufficient observations remain unclassified rather than being assigned a
+      behavioral state.
+    </p>
+
+    <h4 class="reveal">3. Daily activity centers and personalized unfamiliarity</h4>
+    <p class="reveal">
+      Each eligible day's representative location is a <strong>spherical centroid weighted by stop
+      dwell duration</strong>. Each retained device has <strong>14&ndash;21 eligible baseline daily
+      centers</strong>, one for each eligible day in September 2&ndash;22. Centers from different
+      days may coincide spatially; they remain separate daily observations. The following kNN
+      scores are <strong>unweighted arithmetic means of three geodesic distances</strong>, rather
+      than weighted centers or averages of coordinates.
+    </p>
+    <p class="reveal">
+      Let \(B_u=\{c_{u,b}:b\in\mathcal B_u\}\) denote the baseline centers indexed by eligible
+      baseline dates. For each baseline date \(b\), exclude that date and select the three spatially
+      nearest <strong>other</strong> baseline-day centers:
+    </p>
+    <p class="reveal">
+      \[
+      L_{u,b}=\frac{1}{3}\sum_{j=1}^{3}d\left(c_{u,b},c_{u,b^{(-b)}_{(j)}}\right).
+      \]
+    </p>
+    <p class="reveal">
+      Repeating this leave-one-out (LOO) operation yields 14&ndash;21 scores for the device. Its
+      threshold is the maximum of those scores:
+    </p>
+    <p class="reveal">
+      \[
+      T_u=\max_{b\in\mathcal B_u}L_{u,b}.
+      \]
+    </p>
+    <p class="reveal">
+      For each eligible target date \(t\) in September 23&ndash;October 23, select the three
+      nearest baseline centers from the <strong>full</strong> baseline collection and average their
+      distances to the target-day center:
+    </p>
+    <p class="reveal">
+      \[
+      S_{u,t}=\frac{1}{3}\sum_{j=1}^{3}d\left(c_{u,t},c_{u,b^{(t)}_{(j)}}\right).
+      \]
+    </p>
+    <p class="reveal">
+      Distances are in kilometers; nearest neighbors are selected spatially, not chronologically. A
+      target day is unfamiliar precisely when
+    </p>
+    <p class="reveal">
+      \[
+      S_{u,t}&gt;T_u.
+      \]
+    </p>
+    <p class="reveal">
+      Thus, <code>baseline_score_max</code> is the <strong>maximum baseline LOO mean-distance
+      score</strong>. It is neither the maximum pairwise baseline distance nor the distance to the
+      farthest baseline point. The baseline reference remains fixed throughout detection and return
+      follow-up.
+    </p>
+    <p class="reveal">
+      This individual-specific threshold describes unusual displacement relative to routine
+      mobility; it does not impose a common minimum evacuation distance. An eligible day that does
+      not exceed the threshold is classified as familiar. The empirical baseline tail fraction is a
+      descriptive rarity measure, not a validated hypothesis-test p-value.
+    </p>
+
+    <h4 class="reveal">4. Persistent departures and the home-location filter</h4>
+    <p class="reveal">
+      Unfamiliar days are grouped into sequences within September 23&ndash;30. A familiar day
+      always ends a sequence. Up to <strong>two consecutive missing or ineligible days</strong> may
+      be bridged, but missing days do not contribute to the count of confirmed unfamiliar days. A
+      candidate sequence must contain at least <strong>two observed unfamiliar days</strong> and
+      meet the September 29 persistence rule: its last unfamiliar day is on or after that date, or
+      falls within the preceding two days without an intervening observed familiar day through
+      September 29.
+    </p>
+    <p class="reveal">
+      The candidate must also have an estimated home within the configured rectangle: latitude
+      <strong>24&ndash;31&deg;N</strong>, longitude <strong>88&ndash;79&deg;W</strong>. This is a
+      coarse plausibility filter, not an exact Florida boundary or a home-address-level
+      evacuation-zone test. The first observed unfamiliar day of the qualifying sequence is the
+      <strong>inferred departure date</strong>. The rule can identify departures around or after
+      landfall; the current specification does not enforce departure before landfall or before a
+      local evacuation-order deadline.
+    </p>
+    <p class="reveal">
+      Home coordinates are estimated from baseline nighttime observations, using the
+      <strong>21:00&ndash;07:00 local-time window</strong>. Nightly centers within
+      <strong>3 km</strong> are treated as spatial neighbors; the night with the largest
+      neighborhood anchors the home cluster, and the home location is estimated from the underlying
+      stops belonging to that cluster. Although the principal behavioral signal uses all-day
+      activity, home filtering and distance estimation still use nighttime information.
+    </p>
+
+    <h4 class="reveal">5. Return and destination estimation</h4>
+    <p class="reveal">
+      Within <strong>October 1&ndash;23</strong>, the earliest sequence containing at least
+      <strong>two observed familiar days</strong>, allowing gaps of up to two missing days, provides
+      the inferred return date. An unfamiliar day breaks a return sequence. This measures a return
+      to the baseline activity pattern and should not be presented as direct verification of entry
+      into the home. If no qualifying sequence is observed, return remains undetected by the end of
+      follow-up.
+    </p>
+    <p class="reveal">
+      The destination is estimated from nighttime observations during the inferred away period. The
+      procedure selects the most recent qualifying spatial cluster containing at least
+      <strong>two nights within the 3-km neighborhood</strong>, rather than a single transit stop.
+      These nights need not be adjacent calendar nights. Evacuation distance is the geodesic
+      distance between the estimated home and destination, not the traveled route length. Distance
+      remains missing when an endpoint cannot be estimated.
+    </p>
+
+    <h4 class="reveal">6. Community-level outcomes</h4>
+    <p class="reveal">
+      For each home CBG, the notebook aggregates the number of eligible devices, number of detected
+      candidate evacuees, detected evacuation rate, median inferred days from departure to return,
+      and median home-to-destination distance. The rate is
+    </p>
+    <p class="reveal">
+      \[
+      \widehat{E}_g=\frac{\text{detected candidate evacuees in CBG }g}{\text{eligible devices in CBG }g}.
+      \]
+    </p>
+    <p class="reveal">
+      Its complement is a <strong>non-detection rate</strong> within the eligible-device sample.
+      Interpreting it as evacuation non-compliance requires additional support concerning order
+      applicability, timing, geographic exposure, and classification validity. Community covariates
+      can subsequently be linked by harmonized geography; the supplied notebook does not establish a
+      particular regression model or causal identification strategy.
+    </p>
+
+    <h4 class="reveal">Framework overview</h4>
+    <div class="framework-grid reveal">
+      <div class="framework-card">
+        <span class="framework-num">01</span>
+        <h4>Resolve &amp; qualify</h4>
+        <ul>
+          <li>Same-geohash8 overlaps merge into a time union; conflicts between locations resolve by positional accuracy.</li>
+          <li>A user-day qualifies at &ge;120 min covered, &ge;240 min span, no remaining overlap.</li>
+          <li>Devices need &ge;14 eligible baseline days and &ge;3 eligible detection-window days.</li>
+        </ul>
+      </div>
+      <div class="framework-card">
+        <span class="framework-num">02</span>
+        <h4>Daily activity center</h4>
+        <ul>
+          <li>Each eligible day is summarized by a dwell-time-weighted spherical centroid.</li>
+          <li>Yields 14&ndash;21 baseline daily centers per retained device.</li>
+        </ul>
+      </div>
+      <div class="framework-card">
+        <span class="framework-num">03</span>
+        <h4>Spatial unfamiliarity</h4>
+        <ul>
+          <li>Leave-one-out (LOO) scoring averages distance to a baseline day's 3 nearest other centers.</li>
+          <li>The device's maximum LOO score sets its personal unfamiliarity threshold.</li>
+          <li>A target day is unfamiliar when its 3-nearest-baseline average distance exceeds that threshold.</li>
+        </ul>
+      </div>
+      <div class="framework-card">
+        <span class="framework-num">04</span>
+        <h4>Persistent departure</h4>
+        <ul>
+          <li>Requires &ge;2 observed unfamiliar days (gaps &le;2 days bridged) meeting the Sep 29 persistence check.</li>
+          <li>Candidate must also have an estimated home inside the coarse Florida bounding box.</li>
+        </ul>
+      </div>
+      <div class="framework-card">
+        <span class="framework-num">05</span>
+        <h4>Return &amp; distance</h4>
+        <ul>
+          <li>A return sequence needs &ge;2 observed familiar days within Oct 1&ndash;23.</li>
+          <li>Destination estimated from nighttime clusters (&ge;2 nights within 3 km).</li>
+          <li>Evacuation distance is the geodesic home-to-destination distance.</li>
+        </ul>
+      </div>
+      <div class="framework-card">
+        <span class="framework-num">06</span>
+        <h4>Community patterns</h4>
+        <ul>
+          <li>Device-level results aggregate to each home CBG.</li>
+          <li>Eligible devices, detected evacuees, detected evacuation rate, median days away, median distance.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="framework-caption reveal">
+      Overlapping stop intervals at the same location are unioned; conflicts between different
+      locations are resolved by positional accuracy. Coverage screening identifies eligible
+      user-days, followed by cohort eligibility screening. Dwell-time-weighted daily activity
+      centers yield 14&ndash;21 baseline centers per eligible device. For each baseline day,
+      leave-one-out (LOO) scoring averages geodesic distances to the three spatially nearest other
+      baseline centers. A target-day score averages distances to its three nearest centers in the
+      full baseline set and is classified as unfamiliar when it exceeds that device's maximum
+      baseline LOO score. Persistent unfamiliar sequences support candidate detection, followed by
+      return and distance estimation and home-CBG aggregation. All illustrations are schematic;
+      full cohort, home-filter, missing-data, and persistence rules appear in the methods text
+      above.
+    </p>
   </div>
 </section>
 
@@ -389,6 +825,8 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 <script type="module" src="js/app.js"></script>
 </body>
 </html>

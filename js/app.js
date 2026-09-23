@@ -27,6 +27,7 @@ const heroEl = document.querySelector(".hero");
 let dashboard = null;
 let profileCardsLoaded = false;
 let heroTypeLoop = null;
+let mathRendered = false;
 
 initRouter({
   onEnter(id) {
@@ -52,6 +53,20 @@ initRouter({
       // ticking (and touching a hidden element) in the background.
       heroTypeLoop.stop();
       heroTypeLoop = null;
+    }
+
+    // Page 2's methodology math is authored with the same \(...\)/\[...\]
+    // delimiters KaTeX's auto-render extension looks for, loaded via CDN
+    // in index.html. Rendered once, lazily, on first visit.
+    if (id === "2" && !mathRendered && window.renderMathInElement) {
+      mathRendered = true;
+      window.renderMathInElement(document.getElementById("page-2"), {
+        delimiters: [
+          { left: "\\[", right: "\\]", display: true },
+          { left: "\\(", right: "\\)", display: false },
+        ],
+        throwOnError: false,
+      });
     }
 
     if (id === "3") {
