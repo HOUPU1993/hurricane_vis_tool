@@ -37,14 +37,15 @@ initRouter({
         [
           // The title keeps a slow, dramatic pace; the subtitle/lede are
           // sped up so the whole hero (title+subtitle+lede is ~470
-          // characters) still finishes - and visibly loops - in a
-          // reasonable time instead of a single pass taking most of a
-          // minute at the title's per-character speed.
+          // characters) still finishes in a reasonable time instead of a
+          // single pass taking most of a minute at the title's
+          // per-character speed. Holds fully typed for 5s, then clears
+          // and retypes - no backspace animation.
           { el: heroTitleEl, text: HERO_TITLE },
-          { el: heroSubtitleEl, text: HERO_SUBTITLE, typeSpeed: 30, deleteSpeed: 16 },
-          { el: heroLedeEl, text: HERO_LEDE, typeSpeed: 24, deleteSpeed: 14 },
+          { el: heroSubtitleEl, text: HERO_SUBTITLE, typeSpeed: 30 },
+          { el: heroLedeEl, text: HERO_LEDE, typeSpeed: 24 },
         ],
-        { holdMs: 3200, onFirstComplete: () => heroEl.classList.add("typing-done") }
+        { holdMs: 5000, onFirstComplete: () => heroEl.classList.add("typing-done") }
       );
     } else if (heroTypeLoop) {
       // Leaving the home page - stop the loop rather than let it keep

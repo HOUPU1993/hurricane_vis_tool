@@ -139,8 +139,14 @@ sup.cite a:hover { text-decoration: underline; }
 
 /* ---- landing / home page --------------------------------------------------- */
 .page--home {
-  position: relative; min-height: 100vh; flex-direction: column; justify-content: flex-start;
-  padding: calc(var(--nav-h) + 26px) 24px 26px; overflow: hidden;
+  position: relative; min-height: 100vh; flex-direction: column;
+  /* Prefer a vertically-centered hero on tall/roomy viewports (rather than
+     hugging the top with dead space below) - "safe" falls back to
+     flex-start instead of clipping content on short viewports. Browsers
+     that don't understand `safe center` simply keep the flex-start above. */
+  justify-content: flex-start;
+  justify-content: safe center;
+  padding: calc(var(--nav-h) + 30px) 24px 30px; overflow: hidden;
 }
 
 /* Cursor-follow spotlight: a faint evacuation-rate choropleth, hidden
@@ -150,7 +156,9 @@ sup.cite a:hover { text-decoration: underline; }
    dominant - low opacity, small radius, sits behind all hero content. */
 .bg-reveal {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background: #000 url("../assets/evac-rate-bg.svg") center/cover no-repeat;
+  /* Zoomed in well past "cover" - this is meant to read as an abstract
+     textured backdrop, not a legible map of the whole study area. */
+  background: #000 url("../assets/evac-rate-bg.svg") center/220% no-repeat;
   opacity: 0;
   -webkit-mask-image: radial-gradient(circle 230px at var(--mx, -9999px) var(--my, -9999px), black 0%, black 55%, transparent 100%);
   mask-image: radial-gradient(circle 230px at var(--mx, -9999px) var(--my, -9999px), black 0%, black 55%, transparent 100%);
@@ -158,7 +166,7 @@ sup.cite a:hover { text-decoration: underline; }
 }
 .bg-reveal.is-active { opacity: 0.4; }
 
-.hero { position: relative; z-index: 1; max-width: 760px; margin: 0 auto 30px; }
+.hero { position: relative; z-index: 1; max-width: 860px; margin: 0 auto 36px; }
 
 /* The whole hero block (title, subtitle, lede) types itself in as one
    continuous sequence via js/core/typewriter.js's loopTypeSequence
@@ -166,19 +174,19 @@ sup.cite a:hover { text-decoration: underline; }
    its own, so it isn't fighting the typing motion. min-height reserves
    space at each element's final wrapped size so nothing reflows the tiles
    below as characters are added. */
-.hero-title { font-size: clamp(28px, 4.2vw, 44px); line-height: 1.14; margin: 0 0 16px; letter-spacing: -0.02em; min-height: 1.25em; }
+.hero-title { font-size: clamp(32px, 4.8vw, 58px); line-height: 1.14; margin: 0 0 20px; letter-spacing: -0.02em; min-height: 1.25em; }
 .type-cursor { display: inline-block; width: 3px; height: 0.95em; margin-left: 2px; background: #fff; vertical-align: -0.1em; animation: blink 1s step-end infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
-.hero-subtitle { font-size: 16px; line-height: 1.5; color: #d8d8d8; font-weight: 500; max-width: 660px; margin: 0 0 16px; min-height: 3em; }
-.hero-lede { font-size: 14.5px; line-height: 1.55; color: #adadad; max-width: 640px; margin: 0 0 26px; min-height: 4.65em; }
+.hero-subtitle { font-size: 19px; line-height: 1.5; color: #d8d8d8; font-weight: 500; max-width: 760px; margin: 0 0 20px; min-height: 3em; }
+.hero-lede { font-size: 16.5px; line-height: 1.6; color: #adadad; max-width: 820px; margin: 0 0 26px; min-height: 4.9em; }
 
 /* The CTA stays a discrete button rather than typed text, so it still
    fades up once the whole hero sequence finishes typing (.hero.typing-done,
    set by js/app.js). */
 .hero-cta {
-  display: inline-flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-size: 14px; font-weight: 600;
-  padding: 12px 20px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-size: 15px; font-weight: 600;
+  padding: 13px 22px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 999px;
   opacity: 0; transform: translateY(10px);
   transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
@@ -191,15 +199,15 @@ sup.cite a:hover { text-decoration: underline; }
 }
 
 .home-footer {
-  position: relative; z-index: 1; max-width: 1080px; margin: 24px auto 0; padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 11.5px; color: var(--muted-dim); line-height: 1.5;
+  position: relative; z-index: 1; max-width: 1080px; margin: 26px auto 0; padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 12.5px; color: var(--muted-dim); line-height: 1.5;
 }
-.home-footer p { margin: 0 0 4px; }
+.home-footer p { margin: 0 0 5px; }
 .home-footer a { color: #6da7ec; text-decoration: none; }
 .home-footer a:hover { text-decoration: underline; }
 .home-footer strong { color: var(--muted); }
 
-.page-grid { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.page-grid { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 13px; }
 .page-tile {
   position: relative; display: flex; flex-direction: column; gap: 5px; padding: 15px 16px; border-radius: 12px;
   background: var(--card-bg); border: 1px solid var(--card-border); text-decoration: none;
@@ -213,9 +221,9 @@ sup.cite a:hover { text-decoration: underline; }
   background: var(--accent, #2a78d6); transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease;
 }
 .page-tile:hover::before { transform: scaleX(1); }
-.page-tile-num { font-size: 12px; color: var(--accent, #2a78d6); font-weight: 700; letter-spacing: 0.05em; }
-.page-tile-title { font-size: 15.5px; font-weight: 600; color: #fff; }
-.page-tile-desc { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.page-tile-num { font-size: 13px; color: var(--accent, #2a78d6); font-weight: 700; letter-spacing: 0.05em; }
+.page-tile-title { font-size: 17px; font-weight: 600; color: #fff; }
+.page-tile-desc { font-size: 13.5px; color: var(--muted); line-height: 1.5; }
 
 @media (max-width: 700px) {
   .page-grid { grid-template-columns: 1fr 1fr; }
