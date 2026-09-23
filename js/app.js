@@ -5,6 +5,7 @@ import { renderProfileCards } from "./core/profileCards.js";
 import { CATEGORIES } from "./metrics/index.js";
 import { loopTypeSequence } from "./core/typewriter.js";
 import { initSpotlight } from "./core/spotlight.js";
+import { initRegressionPage } from "./core/regressionPage.js";
 
 initScrollReveal();
 initSpotlight();
@@ -28,6 +29,7 @@ let dashboard = null;
 let profileCardsLoaded = false;
 let heroTypeLoop = null;
 let mathRendered = false;
+let regressionPageLoaded = false;
 
 initRouter({
   onEnter(id) {
@@ -84,6 +86,12 @@ initRouter({
       renderProfileCards(document.getElementById("profile-cards"), CATEGORIES).then(() => {
         initScrollReveal(document.getElementById("profile-cards"));
       });
+    }
+
+    if (id === "5" && !regressionPageLoaded) {
+      regressionPageLoaded = true;
+      initRegressionPage();
+      initScrollReveal(document.getElementById("page-5"));
     }
   },
 });

@@ -662,18 +662,102 @@
 </section>
 
 <!-- ================================================================== -->
-<!-- Page 5 - Regression Results (placeholder)                           -->
+<!-- Page 5 - Regression Results                                         -->
 <!-- ================================================================== -->
 <section id="page-5" class="page">
-  <div class="page-inner">
+  <div class="page-inner page-inner--wide">
     <header class="page-header">
       <p class="page-eyebrow">05</p>
       <h2>Regression Results</h2>
     </header>
-    <div class="placeholder-page">
-      <span class="placeholder-badge">In progress</span>
-      <p>Model specification and results linking place attachment to evacuation non-compliance
-        will be added here.</p>
+    <p class="page-subtitle reveal">
+      Community-level WLS regressions of the three detected evacuation outcomes (evacuation rate,
+      return time, and evacuation distance) on housing-finance and length-of-residence measures,
+      controlling for socio-demographic, political, and hurricane-exposure covariates. All
+      independent variables are standardized (z-scored) before estimation, so every coefficient
+      below is the outcome's expected change per 1 standard deviation increase in that predictor.
+    </p>
+
+    <h3 class="reveal">Variable selection</h3>
+    <p class="reveal">
+      The regressions test one core idea: that a household's financial and temporal investment in
+      its home &mdash; how much equity is at stake, whether a mortgage is still active, how much of
+      that loan is left to pay off, and how long the household has lived there &mdash; makes leaving
+      ahead of a storm a harder decision, not just a matter of risk perception. These four
+      <strong>key features</strong> are the paper's main variables of interest:
+    </p>
+    <ul class="reveal">
+      <li><strong>Median home equity</strong> (log) &mdash; the study area's median is
+        $245,559 (mean $352,797), so most block groups have real housing wealth that would need to
+        be left behind or protected.</li>
+      <li><strong>Active mortgage share</strong> &mdash; a median of 54.3% of homes still carry an
+        active mortgage, meaning a majority of owners have an ongoing financial obligation tied to
+        the property.</li>
+      <li><strong>Median remaining loan term</strong> &mdash; a median of about 25.3 years left on
+        the loan, close to a fresh 30-year term, suggesting many owners are still early in that
+        commitment.</li>
+      <li><strong>Owner length of residence</strong> &mdash; a median of 15 years in the current
+        home, the clearest proxy for accumulated social and material attachment to place.</li>
+    </ul>
+    <p class="reveal">
+      Everything else in the model is a <strong>control</strong>: variables that plausibly affect
+      evacuation behavior for reasons unrelated to housing-finance attachment, and that could
+      otherwise confound the key features above if left out. They're drawn straight from the
+      <a href="#/4">study area profile</a> categories &mdash; housing cost burden and housing
+      type (cost-burdened share, single-family share, mobile-home share, and homeownership rate,
+      itself a median 78.0% across the study area); income and education (income quintile shares
+      and college-degree rate); population structure (age 65+, race/ethnicity shares, population
+      density, and the presence of children in the household); political registration (share
+      registered Republican); vehicle and broadband access; and, for the storm itself, peak wind
+      speed at each block group. Grouping controls this way keeps the regression's predictor list
+      anchored to the same categories used throughout the site, rather than an arbitrary control
+      list.
+    </p>
+
+    <h3 class="reveal">Multicollinearity check</h3>
+    <p class="reveal">
+      Before interpreting any coefficients, we check that the 23 standardized predictors aren't so
+      correlated with each other that individual effects become unstable. Both the pairwise
+      correlation matrix and the variance inflation factors (VIF, computed on the full Model 4
+      predictor set) point the same way: no problematic overlap.
+    </p>
+    <h4 class="reveal">Correlation matrix</h4>
+    <div class="corr-wrap reveal">
+      <div id="corr-heatmap"><p class="placeholder">Loading correlation matrix&hellip;</p></div>
+    </div>
+    <h4 class="reveal">Variance inflation factors</h4>
+    <div id="vif-table" class="reveal"><p class="placeholder">Loading VIF table&hellip;</p></div>
+
+    <h3 class="reveal">Model 0 &rarr; 4: does adding housing-finance attachment improve the model?</h3>
+    <p class="reveal">
+      Each dependent variable is fit through the same five nested specifications, all on the same
+      shared analytic sample (N&nbsp;=&nbsp;911) so the comparison is valid: <strong>Model
+      0</strong> is controls only (without the household-children control); <strong>Model 1</strong>
+      adds it back; <strong>Model 2</strong> adds the home-equity/mortgage trio; <strong>Model
+      3</strong> adds owner length of residence instead; and <strong>Model 4</strong> is the full
+      model with all four key features together. The table below tracks the four key features'
+      coefficients as they enter, alongside R&sup2; and adjusted R&sup2; for the whole model at
+      each step.
+    </p>
+    <div id="model-comparison" class="cmp-grid reveal">
+      <p class="placeholder">Loading model comparison&hellip;</p>
+    </div>
+
+    <h3 class="reveal">Model 4: standardized coefficients</h3>
+    <p class="reveal">
+      The full model for each dependent variable, plotted as a coefficient (dot-and-whisker) chart
+      &mdash; every predictor's standardized effect with its 95% confidence interval, so both
+      direction and precision are visible at once. Rows keep the same category colors used on the
+      map and study profile pages; the four key features are highlighted separately at the top of
+      each panel rather than mixed in by effect size, so they're easy to find. A filled dot means
+      p&nbsp;&lt;&nbsp;0.05, a half-opacity dot means p&nbsp;&lt;&nbsp;0.1, and a hollow dot is not
+      significant at the 0.1 level &mdash; stars (*, **, ***) mark the same thresholds. Because the
+      three outcomes are on different units (a rate, a day count, and a log-distance), coefficients
+      are only comparable <em>within</em> a panel, per 1 SD change in that predictor &mdash; not
+      across panels.
+    </p>
+    <div id="coefficient-plots" class="coef-grid reveal">
+      <p class="placeholder">Loading coefficient plots&hellip;</p>
     </div>
   </div>
 </section>
