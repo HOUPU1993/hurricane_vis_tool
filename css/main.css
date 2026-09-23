@@ -157,12 +157,11 @@ sup.cite a:hover { text-decoration: underline; }
 /* ---- framework overview figure (Page 2) ------------------------------------ */
 /* Fills the page's wide 1280px column, same width as Table 2 above it, so
    the six-panel diagram stays legible at a glance rather than shrinking to
-   the narrower prose column. */
-.figure-wrap {
-  border: 1px solid var(--card-border); border-radius: 10px; padding: 12px;
-  background: var(--card-bg); margin: 20px 0 12px;
-}
-.figure-wrap img { display: block; width: 100%; max-width: 100%; height: auto; border-radius: 6px; }
+   the narrower prose column. The image already has its own dark background
+   and padding baked in, so it sits directly on the page - no extra card
+   frame around it, which just doubled up the black-on-black border. */
+.figure-wrap { margin: 20px 0 12px; }
+.figure-wrap img { display: block; width: 100%; max-width: 100%; height: auto; border-radius: 10px; }
 
 /* KaTeX inherits color from its surrounding paragraph rather than forcing
    black, but display-mode equations get their own breathing room. */
