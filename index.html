@@ -313,7 +313,7 @@
       home CBG to support comparison with community characteristics.
     </p>
 
-    <h4 class="reveal">Table 2. Sociodemographic variables and additional community controls</h4>
+    <h4 class="reveal">Sociodemographic variables and additional community controls</h4>
     <p class="reveal">The weight names below reproduce the supplied project specification. They have
       <strong>not</strong> been verified against a weighting or geographic-crosswalk implementation
       and should not be described as ACS survey weights without further documentation.</p>
@@ -465,108 +465,138 @@
 
     <h4 class="reveal">3. Daily activity centers and personalized unfamiliarity</h4>
     <p class="reveal">
-      Each eligible day's representative location is a <strong>spherical centroid weighted by stop
-      dwell duration</strong>. Each retained device has <strong>14&ndash;21 eligible baseline daily
-      centers</strong>, one for each eligible day in September 2&ndash;22. Centers from different
-      days may coincide spatially; they remain separate daily observations. The following kNN
-      scores are <strong>unweighted arithmetic means of three geodesic distances</strong>, rather
-      than weighted centers or averages of coordinates.
+      Each eligible day's activity center is a spherical centroid weighted by stop dwell duration.
+      Each retained user has <strong>14&ndash;21 eligible baseline days</strong> during September
+      2&ndash;22.
     </p>
+    <p class="reveal">We use the following notation:</p>
+    <ul class="reveal">
+      <li><strong>\(u\)</strong>: a user.</li>
+      <li><strong>\(d\)</strong>: a date.</li>
+      <li><strong>\(D_u\)</strong>: the eligible baseline dates for user \(u\).</li>
+      <li><strong>\(C_{u,d}\)</strong>: the activity center of user \(u\) on date \(d\).</li>
+    </ul>
+    <p class="reveal"><strong>Baseline unfamiliarity: leave-one-out comparison</strong></p>
     <p class="reveal">
-      Let \(B_u=\{c_{u,b}:b\in\mathcal B_u\}\) denote the baseline centers indexed by eligible
-      baseline dates. For each baseline date \(b\), exclude that date and select the three spatially
-      nearest <strong>other</strong> baseline-day centers:
-    </p>
-    <p class="reveal">
-      \[
-      L_{u,b}=\frac{1}{3}\sum_{j=1}^{3}d\left(c_{u,b},c_{u,b^{(-b)}_{(j)}}\right).
-      \]
-    </p>
-    <p class="reveal">
-      Repeating this leave-one-out (LOO) operation yields 14&ndash;21 scores for the device. Its
-      threshold is the maximum of those scores:
+      For each baseline date \(d\), we exclude that day's center and identify the three spatially
+      nearest centers from the user's other eligible baseline days. Let \(r_1\), \(r_2\), and
+      \(r_3\) denote the geodesic distances to these three neighbors, in kilometers. The baseline
+      leave-one-out (LOO) score is:
     </p>
     <p class="reveal">
       \[
-      T_u=\max_{b\in\mathcal B_u}L_{u,b}.
+      L_{u,d} = \frac{r_1+r_2+r_3}{3}.
       \]
     </p>
     <p class="reveal">
-      For each eligible target date \(t\) in September 23&ndash;October 23, select the three
-      nearest baseline centers from the <strong>full</strong> baseline collection and average their
-      distances to the target-day center:
+      Repeating this calculation for every date in \(D_u\) produces <strong>14&ndash;21 baseline
+      LOO scores per user</strong>. The user's unfamiliarity threshold is the largest of these
+      scores:
     </p>
     <p class="reveal">
       \[
-      S_{u,t}=\frac{1}{3}\sum_{j=1}^{3}d\left(c_{u,t},c_{u,b^{(t)}_{(j)}}\right).
+      T_u = \max_{d \in D_u} L_{u,d}.
       \]
     </p>
+    <p class="reveal"><strong>Target-day unfamiliarity</strong></p>
     <p class="reveal">
-      Distances are in kilometers; nearest neighbors are selected spatially, not chronologically. A
-      target day is unfamiliar precisely when
+      For each eligible target date \(d\) during September 23&ndash;October 23, we compare
+      \(C_{u,d}\) with the user's full collection of baseline centers. Let \(q_1\), \(q_2\), and
+      \(q_3\) denote the distances to the three spatially nearest baseline centers. The target-day
+      score is:
     </p>
     <p class="reveal">
       \[
-      S_{u,t}&gt;T_u.
+      S_{u,d} = \frac{q_1+q_2+q_3}{3}.
+      \]
+    </p>
+    <p class="reveal">The target day is classified as <strong>unfamiliar</strong> when:</p>
+    <p class="reveal">
+      \[
+      S_{u,d} &gt; T_u.
       \]
     </p>
     <p class="reveal">
-      Thus, <code>baseline_score_max</code> is the <strong>maximum baseline LOO mean-distance
-      score</strong>. It is neither the maximum pairwise baseline distance nor the distance to the
-      farthest baseline point. The baseline reference remains fixed throughout detection and return
-      follow-up.
+      In other words, the target day's three-neighbor average distance must exceed
+      <strong>every baseline LOO average-distance score</strong> for that user.
     </p>
     <p class="reveal">
-      This individual-specific threshold describes unusual displacement relative to routine
-      mobility; it does not impose a common minimum evacuation distance. An eligible day that does
-      not exceed the threshold is classified as familiar. The empirical baseline tail fraction is a
-      descriptive rarity measure, not a validated hypothesis-test p-value.
+      Nearest neighbors are selected by spatial distance, not by date. Both scores are ordinary
+      averages of three distances; dwell-time weighting is used only to construct the daily
+      activity centers. The same baseline reference is retained throughout evacuation detection and
+      return follow-up.
     </p>
 
-    <h4 class="reveal">4. Persistent departures and the home-location filter</h4>
+    <h4 class="reveal">4. Persistent departures</h4>
     <p class="reveal">
-      Unfamiliar days are grouped into sequences within September 23&ndash;30. A familiar day
-      always ends a sequence. Up to <strong>two consecutive missing or ineligible days</strong> may
-      be bridged, but missing days do not contribute to the count of confirmed unfamiliar days. A
-      candidate sequence must contain at least <strong>two observed unfamiliar days</strong> and
-      meet the September 29 persistence rule: its last unfamiliar day is on or after that date, or
-      falls within the preceding two days without an intervening observed familiar day through
-      September 29.
+      We identify candidate evacuations from sequences containing at least <strong>two observed
+      unfamiliar days</strong> during September 23&ndash;30. An observed familiar day breaks a
+      sequence. Up to <strong>two consecutive missing or ineligible days</strong> may be bridged.
     </p>
+    <p class="reveal">A sequence meets the persistence requirement if its last observed unfamiliar day is:</p>
+    <ul class="reveal">
+      <li><strong>September 29 or 30</strong>, or</li>
+      <li><strong>September 28</strong>, with September 29 missing, or</li>
+      <li><strong>September 27</strong>, with both September 28 and 29 missing.</li>
+    </ul>
     <p class="reveal">
-      The candidate must also have an estimated home within the configured rectangle: latitude
-      <strong>24&ndash;31&deg;N</strong>, longitude <strong>88&ndash;79&deg;W</strong>. This is a
-      coarse plausibility filter, not an exact Florida boundary or a home-address-level
-      evacuation-zone test. The first observed unfamiliar day of the qualifying sequence is the
-      <strong>inferred departure date</strong>. The rule can identify departures around or after
-      landfall; the current specification does not enforce departure before landfall or before a
-      local evacuation-order deadline.
-    </p>
-    <p class="reveal">
-      Home coordinates are estimated from baseline nighttime observations, using the
-      <strong>21:00&ndash;07:00 local-time window</strong>. Nightly centers within
-      <strong>3 km</strong> are treated as spatial neighbors; the night with the largest
-      neighborhood anchors the home cluster, and the home location is estimated from the underlying
-      stops belonging to that cluster. Although the principal behavioral signal uses all-day
-      activity, home filtering and distance estimation still use nighttime information.
+      The first observed unfamiliar day in the qualifying sequence is the <strong>inferred
+      departure date</strong>.
     </p>
 
     <h4 class="reveal">5. Return and destination estimation</h4>
     <p class="reveal">
-      Within <strong>October 1&ndash;23</strong>, the earliest sequence containing at least
-      <strong>two observed familiar days</strong>, allowing gaps of up to two missing days, provides
-      the inferred return date. An unfamiliar day breaks a return sequence. This measures a return
-      to the baseline activity pattern and should not be presented as direct verification of entry
-      into the home. If no qualifying sequence is observed, return remains undetected by the end of
-      follow-up.
+      <strong>Return date.</strong> During October 1&ndash;23, we identify the first sequence
+      containing at least <strong>two observed familiar days</strong>. Up to two consecutive
+      missing days may be bridged; an unfamiliar day breaks the sequence. The first familiar day in
+      the qualifying sequence is the inferred return date. If no qualifying sequence is found, the
+      return date remains missing.
     </p>
     <p class="reveal">
-      The destination is estimated from nighttime observations during the inferred away period. The
-      procedure selects the most recent qualifying spatial cluster containing at least
-      <strong>two nights within the 3-km neighborhood</strong>, rather than a single transit stop.
-      These nights need not be adjacent calendar nights. Evacuation distance is the geodesic
-      distance between the estimated home and destination, not the traveled route length. Distance
-      remains missing when an endpoint cannot be estimated.
+      <strong>Home and destination.</strong> For each detected evacuation candidate, we use
+      nighttime stops (<strong>21:00&ndash;07:00 local time</strong>) from two periods:
+    </p>
+    <ul class="reveal">
+      <li><strong>Baseline period (September 2&ndash;22):</strong> to estimate home.</li>
+      <li><strong>Away period:</strong> from the inferred departure date to the night before the
+        inferred return, or through October 23 if no return is detected, to estimate the
+        destination.</li>
+    </ul>
+    <p class="reveal">
+      We first calculate a dwell-time-weighted activity center for each night. Two nights are
+      treated as spatial neighbors when their centers are within <strong>3 km</strong>:
+    </p>
+    <p class="reveal">
+      \[
+      \operatorname{dist}(C_{u,n}, C_{u,m}) \leq 3\ \text{km},
+      \]
+    </p>
+    <p class="reveal">
+      where \(C_{u,n}\) and \(C_{u,m}\) are user \(u\)'s activity centers on nights \(n\) and
+      \(m\).
+    </p>
+    <p class="reveal">
+      For <strong>home</strong>, we select the baseline night with the most spatial neighbors and
+      use it to anchor the home cluster. For <strong>destination</strong>, we select the most
+      recent qualifying cluster containing at least <strong>two nights</strong> during the away
+      period. These nights need not be consecutive.
+    </p>
+    <p class="reveal">
+      Home and destination coordinates are then calculated from the underlying stops in their
+      respective clusters, weighted by dwell duration.
+    </p>
+    <p class="reveal">
+      <strong>Evacuation distance.</strong> The distance for candidate \(u\) is:
+    </p>
+    <p class="reveal">
+      \[
+      E_u = \operatorname{dist}(H_u, A_u),
+      \]
+    </p>
+    <p class="reveal">
+      where \(H_u\) is the estimated home location and \(A_u\) is the estimated destination.
+      Distance is measured geodesically in kilometers and remains missing if either location cannot
+      be estimated.
     </p>
 
     <h4 class="reveal">6. Community-level outcomes</h4>

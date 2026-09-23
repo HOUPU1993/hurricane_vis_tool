@@ -80,6 +80,9 @@ html, body {
 .page-inner h3 { font-size: 19px; margin: 40px 0 12px; color: #fff; }
 .page-inner h4 { font-size: 16px; margin: 28px 0 10px; color: #fff; font-weight: 600; }
 .page-inner p { font-size: 15px; line-height: 1.75; color: #d6d6d6; margin: 0 0 16px; }
+.page-inner ul { margin: 0 0 16px; padding-left: 20px; }
+.page-inner ul li { font-size: 15px; line-height: 1.75; color: #d6d6d6; margin-bottom: 6px; }
+.page-inner ul li:last-child { margin-bottom: 0; }
 .page-inner a { color: #6da7ec; }
 .page-inner a:hover { color: #9ec5f4; }
 .page-inner strong { color: #fff; }
@@ -152,11 +155,14 @@ sup.cite a:hover { text-decoration: underline; }
 .data-table--compact td:first-child { color: var(--muted-dim); }
 
 /* ---- framework overview figure (Page 2) ------------------------------------ */
+/* Table 2 needs the page's wide 1280px column, but the figure reads better
+   at the site's normal prose width - capped and centered independently of
+   the wide container it sits inside, rather than stretched to fill it. */
 .figure-wrap {
-  border: 1px solid var(--card-border); border-radius: 10px; padding: 12px;
-  background: var(--card-bg); margin: 20px 0 12px;
+  max-width: 860px; border: 1px solid var(--card-border); border-radius: 10px; padding: 12px;
+  background: var(--card-bg); margin: 20px auto 12px;
 }
-.figure-wrap img { display: block; width: 100%; height: auto; border-radius: 6px; }
+.figure-wrap img { display: block; width: 100%; max-width: 100%; height: auto; border-radius: 6px; }
 
 /* KaTeX inherits color from its surrounding paragraph rather than forcing
    black, but display-mode equations get their own breathing room. */
