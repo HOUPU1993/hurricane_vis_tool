@@ -135,14 +135,6 @@ sup.cite a:hover { text-decoration: underline; }
    in the same muted color as the rest of the entry. */
 .references li { font-size: 12.5px; color: var(--muted); line-height: 1.7; margin-bottom: 10px; word-break: break-word; }
 
-/* ---- callout / documentation-status note box (Page 2) -------------------- */
-.note-box {
-  border-left: 3px solid #eb6834; padding: 14px 18px; margin: 20px 0 28px;
-  background: rgba(235, 104, 52, 0.07); border-radius: 0 8px 8px 0;
-}
-.note-box p { font-size: 13.5px; font-style: italic; color: #cfcfcf; line-height: 1.6; margin: 0; }
-.note-box strong { color: #eb6834; font-style: normal; }
-
 /* ---- data tables (Page 2) -------------------------------------------------- */
 .table-wrap { overflow-x: auto; margin: 16px 0 8px; border: 1px solid var(--card-border); border-radius: 10px; }
 .data-table { width: 100%; border-collapse: collapse; min-width: 640px; }
@@ -158,27 +150,13 @@ sup.cite a:hover { text-decoration: underline; }
 .data-table tr:last-child td { border-bottom: none; }
 .data-table--compact th, .data-table--compact td { font-size: 12px; padding: 8px 12px; }
 .data-table--compact td:first-child { color: var(--muted-dim); }
-.table-source { font-size: 12px; color: var(--muted-dim); line-height: 1.6; margin: 0 0 32px; }
-.table-source a { word-break: break-word; }
 
-/* ---- methodology framework summary (Page 2) ------------------------------- */
-/* Replaces a static exported diagram: a diagram rendered for a white page
-   would fight the site's black background, so the six steps are instead
-   summarized as cards in the same visual language as the RQ cards above. */
-.framework-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 20px 0 12px;
+/* ---- framework overview figure (Page 2) ------------------------------------ */
+.figure-wrap {
+  border: 1px solid var(--card-border); border-radius: 10px; padding: 12px;
+  background: var(--card-bg); margin: 20px 0 12px;
 }
-.framework-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 18px; }
-.framework-card .framework-num {
-  display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px;
-  border-radius: 50%; background: rgba(235, 104, 52, 0.15); color: #eb6834;
-  font-size: 11.5px; font-weight: 700; margin-bottom: 10px;
-}
-.framework-card h4 { font-size: 14.5px; font-weight: 600; color: #fff; margin: 0 0 8px; }
-.framework-card ul { margin: 0; padding-left: 16px; }
-.framework-card li { font-size: 12.5px; color: #bdbdbd; line-height: 1.55; margin-bottom: 4px; }
-.framework-card li:last-child { margin-bottom: 0; }
-.framework-caption { font-size: 12px; color: var(--muted-dim); line-height: 1.6; margin: 4px 0 0; }
+.figure-wrap img { display: block; width: 100%; height: auto; border-radius: 6px; }
 
 /* KaTeX inherits color from its surrounding paragraph rather than forcing
    black, but display-mode equations get their own breathing room. */

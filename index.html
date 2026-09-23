@@ -313,67 +313,6 @@
       home CBG to support comparison with community characteristics.
     </p>
 
-    <div class="note-box reveal">
-      <p><strong>Documentation status:</strong> the ACS vintage and estimate product, Infutor
-        extract date and fields, and the precise voter-data provenance remain to be confirmed. The
-        supplied notebook documents evacuation detection; it does not establish property-record
-        linkage, insurance coverage, social-network construction, or regression specifications.</p>
-    </div>
-
-    <h4 class="reveal">Table 1. Data sources and analytical roles</h4>
-    <div class="table-wrap reveal">
-      <table class="data-table">
-        <thead>
-          <tr><th>Data source</th><th>Dataset / information</th><th>Unit and temporal coverage</th><th>Role in the study</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Cuebiq</td>
-            <td>Stop by Event Date Uplevelled; stop coordinates, timing, dwell duration, accuracy, and device identifiers</td>
-            <td>Device&ndash;stop records; September 2&ndash;October 23, 2022</td>
-            <td>Construct daily activity centers; detect persistent spatial unfamiliarity; estimate departure, return, and home-to-destination distance. Current parameters retain SIERRA and LIMA records, including uplevelled stops.</td>
-          </tr>
-          <tr>
-            <td>Cuebiq</td>
-            <td>Recurring home-area information (<code>DEVICE_RECURRING_AREA</code>, used in the resident-qualification table)</td>
-            <td>Device&ndash;home-CBG assignment during the baseline period</td>
-            <td>Identify the target resident sample. The repository describes residence in a target CBG on at least 5 baseline days.</td>
-          </tr>
-          <tr>
-            <td>Infutor</td>
-            <td>Property data</td>
-            <td>Property records; extract vintage and selected fields to be documented</td>
-            <td>Characterize property and mortgage-related conditions relevant to material place attachment. Exact measures and aggregation/linkage rules require the property-processing code.</td>
-          </tr>
-          <tr>
-            <td>U.S. Census Bureau</td>
-            <td>American Community Survey detailed tables</td>
-            <td>Census statistical areas; year, 1-year/5-year product, and geography vintage to be confirmed</td>
-            <td>Construct socioeconomic, demographic, housing, and internet-access covariates. See Table 2.</td>
-          </tr>
-          <tr>
-            <td>Voter-registration data</td>
-            <td>User identifies Florida Division of Elections; the supplied link identifies a <strong>2021 L2 voter file aggregated to 2010 census blocks</strong>, distributed by Redistricting Data Hub</td>
-            <td>Registered voters aggregated geographically; 2021 for the linked product</td>
-            <td>Calculate Republican and Democratic registration shares. Confirm whether the analysis uses the L2/RDH product, a direct Division of Elections extract, or both.</td>
-          </tr>
-          <tr>
-            <td>Mandatory-evacuation-zone / CBG crosswalk</td>
-            <td><code>HURRICANE_IAN_MANDATORY_CBG_CROSS</code></td>
-            <td>Target CBGs associated with Hurricane Ian mandatory evacuation zones</td>
-            <td>Define the study geography. Original zone-boundary source, order dates, and CBG inclusion rule should be documented.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="table-source reveal">Sources:
-      <a href="https://github.com/HOUPU1993/hurricane_ian_evacuation_detection" target="_blank" rel="noopener">evacuation-detection repository</a>,
-      <a href="https://github.com/HOUPU1993/hurricane_ian_evacuation_detection/blob/207ae0f454743da2ac5cbccbb2498c5fa06d5714/PARAMETERS.sql" target="_blank" rel="noopener">current parameters</a>,
-      <a href="https://data.census.gov/" target="_blank" rel="noopener">ACS tables</a>, and
-      <a href="https://redistrictingdatahub.org/dataset/2021-florida-l2-voter-file-aggregated-to-2010-census-blocks/" target="_blank" rel="noopener">linked L2/RDH dataset</a>.
-      RDH's <a href="https://redistrictingdatahub.org/state/florida/" target="_blank" rel="noopener">Florida catalogue</a>
-      identifies L2 as the source of the relevant voter-file products.</p>
-
     <h4 class="reveal">Table 2. Sociodemographic variables and additional community controls</h4>
     <p class="reveal">The weight names below reproduce the supplied project specification. They have
       <strong>not</strong> been verified against a weighting or geographic-crosswalk implementation
@@ -477,24 +416,6 @@
         </tbody>
       </table>
     </div>
-    <p class="reveal">
-      B18101 is a person-level disability table, so it cannot directly measure the share of
-      <strong>households</strong> containing someone with a disability. B25044 measures vehicle
-      <strong>availability</strong>, not legal vehicle ownership. The relevant table definitions are
-      available in the Census Bureau's
-      <a href="https://api.census.gov/data/2024/acs/acs5/groups/B18101.html" target="_blank" rel="noopener">B18101 metadata</a>,
-      <a href="https://www2.census.gov/about/training-workshops/2023/2023-05-25-disability-presentation.pdf" target="_blank" rel="noopener">disability documentation</a>, and
-      <a href="https://api.census.gov/data/2024/acs/acs5/groups/B25044.html" target="_blank" rel="noopener">B25044 metadata</a>.
-      These 2024 metadata links verify definitions, not the vintage used by this study.
-    </p>
-    <p class="reveal">
-      If the project weights are geographic allocation factors, harmonize the relevant counts to
-      the target geography before calculating proportions or ratios. Do not average source-area
-      percentages or quantile labels directly. Confirm that the numerator and denominator weights
-      reflect their respective populations. Record the crosswalk source and source/target boundary
-      vintages.
-    </p>
-
     <h3 class="reveal">Methodology: evacuation detection</h3>
     <p class="reveal">
       We identify candidate evacuations as sustained departures from each device's usual activity
@@ -668,72 +589,9 @@
     </p>
 
     <h4 class="reveal">Framework overview</h4>
-    <div class="framework-grid reveal">
-      <div class="framework-card">
-        <span class="framework-num">01</span>
-        <h4>Resolve &amp; qualify</h4>
-        <ul>
-          <li>Same-geohash8 overlaps merge into a time union; conflicts between locations resolve by positional accuracy.</li>
-          <li>A user-day qualifies at &ge;120 min covered, &ge;240 min span, no remaining overlap.</li>
-          <li>Devices need &ge;14 eligible baseline days and &ge;3 eligible detection-window days.</li>
-        </ul>
-      </div>
-      <div class="framework-card">
-        <span class="framework-num">02</span>
-        <h4>Daily activity center</h4>
-        <ul>
-          <li>Each eligible day is summarized by a dwell-time-weighted spherical centroid.</li>
-          <li>Yields 14&ndash;21 baseline daily centers per retained device.</li>
-        </ul>
-      </div>
-      <div class="framework-card">
-        <span class="framework-num">03</span>
-        <h4>Spatial unfamiliarity</h4>
-        <ul>
-          <li>Leave-one-out (LOO) scoring averages distance to a baseline day's 3 nearest other centers.</li>
-          <li>The device's maximum LOO score sets its personal unfamiliarity threshold.</li>
-          <li>A target day is unfamiliar when its 3-nearest-baseline average distance exceeds that threshold.</li>
-        </ul>
-      </div>
-      <div class="framework-card">
-        <span class="framework-num">04</span>
-        <h4>Persistent departure</h4>
-        <ul>
-          <li>Requires &ge;2 observed unfamiliar days (gaps &le;2 days bridged) meeting the Sep 29 persistence check.</li>
-          <li>Candidate must also have an estimated home inside the coarse Florida bounding box.</li>
-        </ul>
-      </div>
-      <div class="framework-card">
-        <span class="framework-num">05</span>
-        <h4>Return &amp; distance</h4>
-        <ul>
-          <li>A return sequence needs &ge;2 observed familiar days within Oct 1&ndash;23.</li>
-          <li>Destination estimated from nighttime clusters (&ge;2 nights within 3 km).</li>
-          <li>Evacuation distance is the geodesic home-to-destination distance.</li>
-        </ul>
-      </div>
-      <div class="framework-card">
-        <span class="framework-num">06</span>
-        <h4>Community patterns</h4>
-        <ul>
-          <li>Device-level results aggregate to each home CBG.</li>
-          <li>Eligible devices, detected evacuees, detected evacuation rate, median days away, median distance.</li>
-        </ul>
-      </div>
+    <div class="figure-wrap reveal">
+      <img src="assets/framework-overview.png" alt="Six-step evacuation-detection framework: resolve and qualify stop data, build daily activity centers, score spatial unfamiliarity, detect persistent departures, estimate return and distance, and aggregate community patterns." loading="lazy" />
     </div>
-    <p class="framework-caption reveal">
-      Overlapping stop intervals at the same location are unioned; conflicts between different
-      locations are resolved by positional accuracy. Coverage screening identifies eligible
-      user-days, followed by cohort eligibility screening. Dwell-time-weighted daily activity
-      centers yield 14&ndash;21 baseline centers per eligible device. For each baseline day,
-      leave-one-out (LOO) scoring averages geodesic distances to the three spatially nearest other
-      baseline centers. A target-day score averages distances to its three nearest centers in the
-      full baseline set and is classified as unfamiliar when it exceeds that device's maximum
-      baseline LOO score. Persistent unfamiliar sequences support candidate detection, followed by
-      return and distance estimation and home-CBG aggregation. All illustrations are schematic;
-      full cohort, home-filter, missing-data, and persistence rules appear in the methods text
-      above.
-    </p>
   </div>
 </section>
 
