@@ -1,8 +1,12 @@
 // Page 4: one card per metric summarizing its distribution across all 915
-// block groups (min / 25th pct / median / mean / 75th pct / max) - a
-// numeric snapshot of the study area, independent of the map on Page 3.
+// block groups (min / 25th pct / median / mean / 75th pct / max, plus the
+// same histogram shown on Page 3) - a numeric + visual snapshot of the
+// study area, independent of the map.
 // Built with DOM calls + textContent (not innerHTML) since metric labels
 // can contain "&" and similar characters that shouldn't be treated as markup.
+import { computeDomain } from "./colorScale.js";
+import { renderHistogram } from "./histogram.js";
+
 const ROWS = [
   ["Min", "min"],
   ["25th pct", "p25"],
@@ -16,18 +20,19 @@ export async function renderProfileCards(container, categories) {
   container.textContent = "";
   const loading = document.createElement("p");
   loading.className = "placeholder";
-  loading.textContent = "Loading summary statistics...";
+  loading.textContent = "Loading study area data...";
   container.appendChild(loading);
 
   let stats;
+  let geoData;
   try {
-    const res = await fetch("data/summary_stats.json");
-    stats = await res.json();
+    const [statsRes, geoRes] = await Promise.all([fetch("data/summary_stats.json"), fetch("data/blockgroups.geojson")]);
+    [stats, geoData] = await Promise.all([statsRes.json(), geoRes.json()]);
   } catch (err) {
     container.textContent = "";
     const errEl = document.createElement("p");
     errEl.className = "placeholder";
-    errEl.textContent = `Could not load data/summary_stats.json - ${err.message}`;
+    errEl.textContent = `Could not load study area data - ${err.message}`;
     container.appendChild(errEl);
     return;
   }
@@ -79,6 +84,15 @@ export async function renderProfileCards(container, categories) {
         dl.appendChild(stat);
       }
       card.appendChild(dl);
+
+      // Same distribution chart as Page 3's map sidebar - the full,
+      // unclipped spread of this metric with dashed lines at the
+      // clipLow/clipHigh percentile bounds.
+      const histWrap = document.createElement("div");
+      histWrap.className = "profile-hist";
+      const domain = computeDomain(geoData.features, metric);
+      renderHistogram(histWrap, domain, metric);
+      card.appendChild(histWrap);
 
       const nEl = document.createElement("p");
       nEl.className = "profile-n";
