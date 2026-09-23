@@ -151,6 +151,14 @@ Tagged milestones in this repo (`git tag -l`, `git checkout <tag>` to view,
   hue, flat/consistent 0.85 fill opacity across all metrics,
   `pct_disability` removed (all-null in source), sidebar background is pure
   black. This was still the single-page dashboard (no multi-page shell yet).
+- `v3-homepage-polish` - user-approved checkpoint of the full 7-page
+  narrative site: hash-router shell with the `.page--home` display-leak
+  bug fixed, the homepage hero (title/subtitle/lede) typed as one looping
+  sequence (type, hold 5s, instant clear, retype - no backspace
+  animation), a vertically-centered-with-safe-fallback layout, a
+  zoomed-in (220%) cursor-follow background, and an academic-style
+  attribution footer. If a later homepage change doesn't work out, this
+  is the tag to roll back to.
 
 ## Running locally
 
