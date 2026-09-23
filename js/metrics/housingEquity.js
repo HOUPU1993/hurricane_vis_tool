@@ -1,4 +1,4 @@
-import { fmtCurrency, fmtPct, fmtYears } from "../core/format.js";
+import { fmtCurrency, fmtPct, fmtMonthsAsYears } from "../core/format.js";
 
 export const CATEGORY = "Home Equity & Mortgage";
 export const CATEGORY_COLOR = "#1baf7a"; // one hue per dimension, not all blue
@@ -32,7 +32,7 @@ export const METRICS = [
     field: "median_loan_term_remaining",
     label: "Median Loan Term Remaining",
     category: CATEGORY,
-    format: fmtYears,
+    format: fmtMonthsAsYears, // raw field is in months
     clipLow: 2,
     clipHigh: 98,
   },
