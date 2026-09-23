@@ -743,14 +743,99 @@
 <!-- Page 6 - Conclusion (placeholder)                                   -->
 <!-- ================================================================== -->
 <section id="page-6" class="page">
-  <div class="page-inner">
+  <div class="page-inner page-inner--wide">
     <header class="page-header">
       <p class="page-eyebrow">06</p>
       <h2>Conclusion</h2>
     </header>
-    <div class="placeholder-page">
-      <span class="placeholder-badge">In progress</span>
-      <p>A summary of findings and their implications will be added here.</p>
+    <p class="page-subtitle reveal">
+      The <a href="#/5">Model 4 full-model effects</a> split cleanly across the three outcomes:
+      whether a household leaves at all draws on both property protection motivation and social
+      network connections, but how long it stays away and how far it goes are each driven by a
+      single, different mechanism.
+    </p>
+
+    <h3 class="reveal">Whether to leave: both mechanisms matter</h3>
+    <p class="reveal">
+      All four key features are significant for <code>evacuation_rate</code>. Active mortgage share
+      (<code>z_pct_active_mortgage</code>, &minus;0.0304, p&nbsp;&lt;&nbsp;.001) and owner length of
+      residence (<code>z_lor_to_2022_owner</code>, &minus;0.0091, p&nbsp;=&nbsp;.012) both push toward
+      staying &mdash; a household still paying down a mortgage, or rooted longer in its community,
+      evacuates less. Median home equity (<code>z_log_median_equity</code>, +0.0135,
+      p&nbsp;=&nbsp;.043) and remaining loan term (<code>z_median_loan_term_remaining</code>, +0.0117,
+      p&nbsp;=&nbsp;.019) push the other way. Section below unpacks why those two don't read as
+      pure protection motivation.
+    </p>
+
+    <h3 class="reveal">How long people stay away</h3>
+    <p class="reveal">
+      Only remaining loan term is significant for <code>median_return_days</code>
+      (+0.1952, p&nbsp;=&nbsp;.013). Equity, mortgage share, and tenure &mdash; the variables that
+      shaped <em>whether</em> a household left &mdash; have nothing to say about how quickly it
+      came back.
+    </p>
+
+    <h3 class="reveal">How far people go</h3>
+    <p class="reveal">
+      Only tenure is significant for <code>log_median_evacuation_distance_km</code>
+      (&minus;0.2289, p&nbsp;=&nbsp;.010): longer-tenured owners who do evacuate travel a shorter
+      distance. That's the cleanest evidence in the whole model for the social-network-connections
+      hypothesis &mdash; households with deeper local ties don't just stay home more often, the ones
+      that do leave stay closer to that network.
+    </p>
+
+    <h3 class="reveal">Reading the key features as proxies, not pure motivations</h3>
+    <p class="reveal">
+      Active mortgage share and tenure behave exactly as their labels suggest &mdash; each is a
+      fairly clean test of one construct (protection motivation, social network connections) and
+      each comes out negative on evacuation rate, as hypothesized. Equity and remaining loan term
+      are messier, and the direction of their coefficients says something about why.
+    </p>
+    <p class="reveal">
+      If median home equity purely measured "how much house there is to protect," it should push
+      the same way active mortgage share does &mdash; toward staying, a negative coefficient. It
+      doesn't: it's positive. Equity also proxies a household's <em>capacity</em> to evacuate &mdash;
+      the resources (a second vehicle, savings for a hotel, somewhere else to go) that wealthier
+      homeowners are more likely to have. That capacity channel runs opposite protection motivation,
+      and here it wins. This isn't a new finding on its own &mdash; the broader evacuation
+      literature already documents that resourced households evacuate more, not
+      less<sup class="cite"><a href="#ref6-1">[1]</a></sup> &mdash; but it means <code>z_log_median_equity</code>
+      is not a clean test of "protecting the house" in this model; its positive sign is exactly
+      what we'd expect if capacity dominates motivation, not evidence against place attachment.
+    </p>
+    <p class="reveal">
+      Remaining loan term is doing something similar in the other direction. A longer remaining
+      term is a bigger long-term financial obligation (the protection-motivation reading, which
+      would predict staying, a negative coefficient) &mdash; but it's also, mechanically, a signal
+      of a <em>newer</em> mortgage, which means a more recently purchased home and less time as a
+      resident. That's the same thing tenure measures, just inverted. The observed sign is positive
+      on both evacuation rate and return days &mdash; a household with more loan left to pay
+      evacuates <em>more</em> and stays away <em>longer</em>, the pattern we'd expect from a
+      recently-arrived, less rooted owner, not from someone anchored by a large financial stake.
+      Once equity and active mortgage share already carry the financial-stake story, what's left in
+      <code>z_median_loan_term_remaining</code> reads more like an inverse tenure signal than an
+      independent protection-motivation one.
+    </p>
+
+    <h3 class="reveal">Takeaway</h3>
+    <p class="reveal">
+      Property protection motivation and social network connections both shape the initial decision
+      to leave, but they're not interchangeable after that: only the mortgage-burden side of
+      protection motivation predicts a longer time away, and only the social-network side predicts
+      staying close by. Two of the four key features (equity, remaining loan term) also carry a
+      second signal &mdash; evacuation capacity and residency recency, respectively &mdash; that
+      complicates a single-mechanism reading of their coefficients. The <a href="#/7">next steps</a>
+      page describes how we plan to separate social network connections from tenure's confound with
+      hurricane preparedness more directly.
+    </p>
+
+    <div class="references reveal">
+      <h3>References</h3>
+      <ol>
+        <li id="ref6-1">Huang, S.-K., Lindell, M. K., &amp; Prater, C. S. (2016). Who leaves and
+          who stays? A review and statistical meta-analysis of hurricane evacuation studies.
+          <em>Environment and Behavior, 48</em>(8), 991&ndash;1029.</li>
+      </ol>
     </div>
   </div>
 </section>
@@ -759,14 +844,257 @@
 <!-- Page 7 - Next Steps (placeholder)                                   -->
 <!-- ================================================================== -->
 <section id="page-7" class="page">
-  <div class="page-inner">
+  <div class="page-inner page-inner--wide">
     <header class="page-header">
       <p class="page-eyebrow">07</p>
       <h2>Next Steps</h2>
     </header>
-    <div class="placeholder-page">
-      <span class="placeholder-badge">In progress</span>
-      <p>Open questions and planned next steps for this research will be added here.</p>
+    <p class="page-subtitle reveal">
+      Three directions planned for this research beyond the Hurricane Ian case study: expanding to
+      a national, multi-hurricane sample; sharpening the social-network-connections measure with
+      mobile-phone co-presence data; and adding road-network controls to the regression.
+    </p>
+
+    <h3 class="reveal">1. From one hurricane to a national study</h3>
+    <p class="reveal">
+      Hurricane Ian is one storm. To test whether property protection motivation and social network
+      connections generalize, the next step is the same analysis across every U.S. hurricane with a
+      mandatory evacuation order since 2019. The table below inventories <strong>14 hurricanes
+      (2019&ndash;2024)</strong> across <strong>11 influenced states</strong> (8 as a primary
+      landfall state: FL, TX, LA, AL, MS, GA, SC, NC), each with its evacuation-zone GIS data status
+      and related published studies.
+    </p>
+    <div class="table-wrap reveal">
+      <table class="data-table data-table--compact">
+        <thead>
+          <tr>
+            <th>Hurricane</th>
+            <th>Primary landfall</th>
+            <th>Influenced states</th>
+            <th>Mandatory evacuation orders</th>
+            <th>Zone data status</th>
+            <th>Related studies</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Hurricane Dorian</strong><br><span class="cat-badge cat2">Cat 2</span></td>
+            <td>North Carolina &mdash; Cape Hatteras, Dare County (Sep 6, 2019)</td>
+            <td>FL, GA, SC, NC</td>
+            <td>NC: mandatory (~400k, Dare Co./Outer Banks) &middot; GA: mandatory (~300k, east of I-95) &middot; SC: mandatory (~830k, 8 coastal counties) &middot; FL: mandatory (multiple Atlantic coast counties)</td>
+            <td><span class="vif-flag vif-flag--ok">NC: downloaded</span> <span class="vif-flag vif-flag--ok">SC: downloaded</span> <span class="vif-flag vif-flag--moderate">GA: county EMA contact</span></td>
+            <td>Anyidoho et al. (2022); Botzen et al. (2024); Peterson et al. (2020)</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Francine</strong><br><span class="cat-badge cat2">Cat 2</span></td>
+            <td>Louisiana &mdash; near Morgan City, St. Mary Parish (Sep 11, 2024)</td>
+            <td>LA, MS</td>
+            <td>LA: mandatory (Cameron Parish full; Grand Isle, Lafitte, Barataria) &middot; MS: no mandatory orders</td>
+            <td><span class="vif-flag vif-flag--ok">LA: downloaded</span></td>
+            <td>Anyidoho et al. (2022)</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Sally</strong><br><span class="cat-badge cat2">Cat 2</span></td>
+            <td>Alabama &mdash; near Gulf Shores, Baldwin County (Sep 16, 2020)</td>
+            <td>LA, MS, AL, FL</td>
+            <td>AL: mandatory (Zone I &amp; II, Baldwin/Mobile) &middot; MS: mandatory (Harrison, Hancock Co.; Jackson Co. voluntary) &middot; LA: mandatory (several parishes) &middot; FL: state of emergency, no large-scale mandatory</td>
+            <td><span class="vif-flag vif-flag--ok">AL: downloaded + manually created</span> <span class="vif-flag vif-flag--moderate">MS: county EMA contact</span></td>
+            <td>Greer et al. (2022)</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Ian</strong><br><span class="cat-badge cat4">Cat 4</span></td>
+            <td>Florida &mdash; near Cayo Costa, Lee County (Sep 28, 2022)</td>
+            <td>FL, SC</td>
+            <td>FL: mandatory (Lee, Charlotte, Collier, Sarasota; 2.5M+ under orders) &middot; SC: no large-scale mandatory orders</td>
+            <td><span class="vif-flag vif-flag--ok">FL: downloaded</span></td>
+            <td>Liu et al. (2024); Alam et al. (2024); Qiang &amp; Cervone (2024); Rashid et al. (2025)</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Idalia</strong><br><span class="cat-badge cat3">Cat 3</span></td>
+            <td>Florida &mdash; near Keaton Beach, Taylor County (Aug 30, 2023)</td>
+            <td>FL, GA, SC</td>
+            <td>FL: mandatory (12 counties incl. Taylor, Dixie, Levy) &middot; GA: state of emergency, voluntary &middot; SC: no mandatory orders</td>
+            <td><span class="vif-flag vif-flag--ok">FL: downloaded</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Debby</strong><br><span class="cat-badge cat1">Cat 1</span></td>
+            <td>Florida &mdash; near Steinhatchee, Taylor County (Aug 5, 2024)</td>
+            <td>FL, GA, SC</td>
+            <td>FL: mandatory (8 Big Bend coastal counties) &middot; SC: partial mandatory (Beaufort/Charleston coastal) &middot; GA: state of emergency, voluntary</td>
+            <td><span class="vif-flag vif-flag--ok">FL: downloaded</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Helene</strong><br><span class="cat-badge cat4">Cat 4</span></td>
+            <td>Florida &mdash; near Keaton Beach/Perry, Taylor County (Sep 26, 2024)</td>
+            <td>FL, GA, NC, SC, VA, TN</td>
+            <td>FL: mandatory (20+ counties) &middot; GA: coastal mandatory, inland voluntary &middot; NC: coastal mandatory + inland (Asheville) post-landfall emergency &middot; SC: no pre-landfall mandatory &middot; VA, TN: emergency declarations only</td>
+            <td><span class="vif-flag vif-flag--ok">FL: downloaded</span></td>
+            <td>Lynch et al. (2025); Rashid et al. (2025)</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Milton</strong><br><span class="cat-badge cat3">Cat 3</span></td>
+            <td>Florida &mdash; near Siesta Key, Sarasota County (Oct 9, 2024)</td>
+            <td>FL</td>
+            <td>FL: mandatory (Pinellas, Hillsborough, Manatee, Sarasota; 1M+ under orders, Zones A&ndash;D Tampa Bay)</td>
+            <td><span class="vif-flag vif-flag--ok">FL: downloaded</span></td>
+            <td>Lynch et al. (2025)</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Hanna</strong><br><span class="cat-badge cat1">Cat 1</span></td>
+            <td>Texas &mdash; Padre Island, Kleberg/Kenedy county line (Jul 25, 2020)</td>
+            <td>TX</td>
+            <td>TX: mandatory (low-lying coastal Nueces, Kleberg, Kennedy counties)</td>
+            <td><span class="vif-flag vif-flag--ok">TX: downloaded (H-GAC region)</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Beryl</strong><br><span class="cat-badge cat1">Cat 1</span></td>
+            <td>Texas &mdash; near Matagorda Peninsula, Matagorda County (Jul 8, 2024)</td>
+            <td>TX</td>
+            <td>TX: mandatory (Matagorda Co.; Galveston Zone A; portions of Brazoria, Harris)</td>
+            <td><span class="vif-flag vif-flag--ok">TX: downloaded (H-GAC region)</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Laura</strong><br><span class="cat-badge cat4">Cat 4</span></td>
+            <td>Louisiana &mdash; near Cameron, Cameron Parish (Aug 27, 2020)</td>
+            <td>LA, TX</td>
+            <td>LA: mandatory (Cameron Parish full; 4 parishes partial; ~385k under orders) &middot; TX: voluntary only (Orange, Jefferson)</td>
+            <td><span class="vif-flag vif-flag--ok">LA: downloaded</span></td>
+            <td>Greer et al. (2023); Greer et al. (2022)</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Ida</strong><br><span class="cat-badge cat4">Cat 4</span></td>
+            <td>Louisiana &mdash; near Port Fourchon, Lafourche Parish (Aug 29, 2021)</td>
+            <td>LA, MS, AL, GA, NC, VA, NY</td>
+            <td>LA: mandatory (7 parishes; Grand Isle fully evacuated) &middot; MS: state of emergency only &middot; AL, GA, VA, NC: tropical-storm impacts, no mandatory orders</td>
+            <td><span class="vif-flag vif-flag--ok">LA: downloaded</span></td>
+            <td>Greer et al. (2024); Zhang et al. (2024); Li et al. (2024)</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Delta</strong><br><span class="cat-badge cat2">Cat 2</span></td>
+            <td>Louisiana &mdash; near Creole, Cameron Parish (Oct 9, 2020)</td>
+            <td>LA, TX</td>
+            <td>LA: mandatory (Cameron, Calcasieu, Vermilion; Beauregard, Jeff Davis voluntary) &middot; TX: state of emergency, voluntary (East TX)</td>
+            <td><span class="vif-flag vif-flag--ok">LA: downloaded</span></td>
+            <td>&mdash;</td>
+          </tr>
+          <tr>
+            <td><strong>Hurricane Zeta</strong><br><span class="cat-badge cat3">Cat 3</span></td>
+            <td>Louisiana &mdash; near Cocodrie, Terrebonne Parish (Oct 28, 2020)</td>
+            <td>LA, MS, AL</td>
+            <td>LA: mandatory (Grand Isle full island; portions of Lafourche, Terrebonne) &middot; MS, AL: state of emergency only</td>
+            <td><span class="vif-flag vif-flag--ok">LA: downloaded</span></td>
+            <td>&mdash;</td>
+          </tr>
+
+<!-- row count: 14 -->
+        </tbody>
+      </table>
+    </div>
+    <p class="embed-note reveal">
+      Compiled from state and county emergency-management sources, augmented with the academic
+      literature on each event. Zone GIS files (shapefiles/GeoJSON) are downloaded per state and
+      not yet included in this repository - Florida's alone is a 113MB statewide shapefile - pending
+      simplification into a common cross-state schema.
+    </p>
+
+    <h4 class="reveal">Mandatory evacuation order records: HEvOD</h4>
+    <p class="reveal">
+      The order-level records behind this table (announcement date/time, order type, affected
+      county, effective date) aren't reproduced here - they're already published as HEvOD, an
+      independent database built by a University of Virginia research
+      team<sup class="cite"><a href="#ref7-1">[1]</a></sup>, with an interactive dashboard at
+      <a href="https://www.hurrevacorder.info/" target="_blank" rel="noopener">hurrevacorder.info</a>.
+      It's embedded below so it can be explored directly; if the embed doesn't load in your browser,
+      use the link above to open it in a new tab.
+    </p>
+    <div class="embed-card reveal">
+      <div class="embed-card-head">
+        <h4>HEvOD &mdash; Hurricane Evacuation Order Database</h4>
+        <a href="https://www.hurrevacorder.info/" target="_blank" rel="noopener">Open in new tab &#8599;</a>
+      </div>
+      <div class="embed-frame-wrap">
+        <iframe src="https://www.hurrevacorder.info/" title="HEvOD - Hurricane Evacuation Order Database" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <p class="embed-note">Anand, Alemazkoor &amp; Shafiee-Jood (2024)<sup class="cite"><a href="#ref7-1">[1]</a></sup>, not affiliated with this project.</p>
+    </div>
+
+    <h4 class="reveal">Data-collection status by state</h4>
+    <p class="reveal">
+      Evacuation-zone GIS data has been downloaded for 6 of the 8 states above; Mississippi has only
+      county-level PDFs so far, and Georgia's zone data hasn't been published for direct download at
+      all (reached out to the county EMA directly).
+    </p>
+    <div class="status-legend reveal">
+      <span class="status-legend-item"><span class="status-legend-dot" style="background:#4fd9a5"></span>Downloaded</span>
+      <span class="status-legend-item"><span class="status-legend-dot" style="background:#f0b93a"></span>Manually collected (PDFs only)</span>
+      <span class="status-legend-item"><span class="status-legend-dot" style="background:#f27f7e"></span>Pending EMA contact</span>
+    </div>
+    <div id="national-status-map" class="reveal"></div>
+
+    <h3 class="reveal">2. Separating social network connections from tenure</h3>
+    <p class="reveal">
+      Owner length of residence is a noisy proxy for social network connections: it also correlates
+      with a household's hurricane experience and disaster preparedness (a long-tenured owner has
+      likely weathered prior storms and prepared the house for them), which is a different mechanism
+      than "knows people nearby." The next step measures social ties directly from mobile-phone
+      co-presence, adapting Raipat, Aldrich &amp; Yabe (2026)<sup class="cite"><a href="#ref7-2">[2]</a></sup>,
+      who build pre/post-disaster co-presence networks from shared visits to third places (POIs) to
+      study how disasters restructure social networks toward bonding ties. This project would swap
+      their POI-based spatial unit for <strong>geohash8</strong> cells (~20&nbsp;m &times; 20&nbsp;m
+      at this latitude) - finer, gridded, and not dependent on POI coverage or polygon boundaries.
+    </p>
+    <p class="reveal">
+      <strong>Stop&ndash;geohash8 matching.</strong> Each device's stop is assigned to the geohash8
+      cell containing it, over two observation windows: weekday 18:00&ndash;23:00, and all day on
+      weekends. Two stops in the same geohash8 cell within the same window, at least 5 minutes apart in time, count as a
+      contact:
+    </p>
+    <p class="reveal">
+      \[ CP_{ij}^{e} = \mathbb{1}(g_i^{e} = g_j^{e}) \cdot \mathbb{1}(\Delta t_{ij}^{e} \ge 5) \]
+      \[ \Delta t_{ij} = \max\bigl(0,\ \min(t_i^{end}, t_j^{end}) - \max(t_i^{start}, t_j^{start})\bigr) \]
+    </p>
+    <p class="reveal">
+      where \(g_i^e\) is device \(i\)'s geohash8 cell for stop event \(e\). Summing contacts across
+      all events in a period gives a weighted co-presence frequency per device pair,
+      \(w_{ij} = \sum_{e \in T} CP_{ij}^{e}\), which becomes the edge weight of a co-presence network
+      \(G^t = (Node^t, Edge^t, Weight^t)\) built separately for the pre- and post-disaster periods.
+      Comparing \(G^{pre}\) and \(G^{post}\) - network size, homophilous bonding-tie strength versus
+      heterogeneous ties, and how much of any network shrinkage survives a behavior-informed
+      counterfactual (removing exactly the devices that evacuated) versus a random-node-removal
+      baseline - gives a social-connectedness measure that isn't confounded with tenure length or
+      prior storm experience, to replace <code>z_lor_to_2022_owner</code> in the regression.
+    </p>
+
+    <h3 class="reveal">3. Road network controls</h3>
+    <p class="reveal">
+      Three road-infrastructure measures, planned as new community-level control variables (not yet
+      in Model 4): how easy a block group's road network makes it to reach an evacuation route in
+      the first place, independent of the household-level motivations this study focuses on.
+    </p>
+    <ul class="reveal">
+      <li><strong>Accessibility</strong> &mdash; network distance from each CBG's centroid to the
+        nearest designated evacuation route.</li>
+      <li><strong>Road density</strong> &mdash; total street length per unit area:
+        \(StreetDensity_i = StreetLength_i / Area_i\).</li>
+      <li><strong>Circuity</strong> &mdash; how indirect the road network is, the ratio of actual
+        road-network length to straight-line distance along the same edges:
+        \(C_i = \dfrac{\sum_{e \in E_i} L_e}{\sum_{e \in E_i} D_e}\).</li>
+    </ul>
+
+    <div class="references reveal">
+      <h3>References</h3>
+      <ol>
+        <li id="ref7-1">Anand, H., Alemazkoor, N., &amp; Shafiee-Jood, M. (2024). HEvOD: A database
+          of hurricane evacuation orders in the United States. <em>Scientific Data, 11</em>, 270.
+          https://doi.org/10.1038/s41597-024-03100-x</li>
+        <li id="ref7-2">Raipat, V., Aldrich, D., &amp; Yabe, T. (2026). Disaster-induced behavioral
+          change restructures social networks toward bonding ties. <em>arXiv preprint
+          arXiv:2606.02790</em>.</li>
+      </ol>
     </div>
   </div>
 </section>

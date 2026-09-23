@@ -6,6 +6,7 @@ import { CATEGORIES } from "./metrics/index.js";
 import { loopTypeSequence } from "./core/typewriter.js";
 import { initSpotlight } from "./core/spotlight.js";
 import { initRegressionPage } from "./core/regressionPage.js";
+import { initNationalStudyMap } from "./core/nationalStudyMap.js";
 
 initScrollReveal();
 initSpotlight();
@@ -30,6 +31,23 @@ let profileCardsLoaded = false;
 let heroTypeLoop = null;
 let mathRendered = false;
 let regressionPageLoaded = false;
+let nationalStudyMap = null;
+let nationalMapLoaded = false;
+let mathRenderedPage7 = false;
+
+// Shared by Page 2 and Page 7, both authored with the same \(...\)/\[...\]
+// KaTeX auto-render delimiters (loaded via CDN in index.html).
+function renderMathIn(pageEl) {
+  if (window.renderMathInElement) {
+    window.renderMathInElement(pageEl, {
+      delimiters: [
+        { left: "\\[", right: "\\]", display: true },
+        { left: "\\(", right: "\\)", display: false },
+      ],
+      throwOnError: false,
+    });
+  }
+}
 
 initRouter({
   onEnter(id) {
@@ -62,13 +80,24 @@ initRouter({
     // in index.html. Rendered once, lazily, on first visit.
     if (id === "2" && !mathRendered && window.renderMathInElement) {
       mathRendered = true;
-      window.renderMathInElement(document.getElementById("page-2"), {
-        delimiters: [
-          { left: "\\[", right: "\\]", display: true },
-          { left: "\\(", right: "\\)", display: false },
-        ],
-        throwOnError: false,
-      });
+      renderMathIn(document.getElementById("page-2"));
+    }
+
+    // Page 7's geohash8 / road-infrastructure formulas use the same
+    // delimiter convention - render once, lazily, on first visit.
+    if (id === "7" && !mathRenderedPage7 && window.renderMathInElement) {
+      mathRenderedPage7 = true;
+      renderMathIn(document.getElementById("page-7"));
+    }
+
+    if (id === "7" && !nationalMapLoaded) {
+      nationalMapLoaded = true;
+      nationalStudyMap = initNationalStudyMap("national-status-map");
+      initScrollReveal(document.getElementById("page-7"));
+    } else if (id === "7" && nationalStudyMap) {
+      // Same Leaflet display:none-container caveat as Page 3's dashboard -
+      // tell it to remeasure now that its container is visible again.
+      setTimeout(() => nationalStudyMap.invalidateSize(), 0);
     }
 
     if (id === "3") {

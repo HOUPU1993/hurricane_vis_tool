@@ -12,9 +12,12 @@ export function initRouter({ onEnter } = {}) {
   }
   const navLinks = document.querySelectorAll("[data-nav-link]");
 
+  // Returns the page id for a recognized #/<id> hash, or null for anything
+  // else (including an in-page anchor like #ref-3 pointing at a citation -
+  // that should scroll natively within the current page, not navigate).
   function parseHash() {
     const raw = location.hash.replace(/^#\/?/, "");
-    return sections.has(raw) ? raw : "home";
+    return sections.has(raw) ? raw : null;
   }
 
   function activate(id) {
@@ -36,7 +39,13 @@ export function initRouter({ onEnter } = {}) {
     if (onEnter) onEnter(id);
   }
 
-  window.addEventListener("hashchange", () => activate(parseHash()));
+  window.addEventListener("hashchange", () => {
+    // An unrecognized hash (e.g. an in-page citation anchor, #ref-3) isn't a
+    // page navigation - leave the current page active and let the browser's
+    // native anchor scroll do its thing, rather than bouncing to home.
+    const id = parseHash();
+    if (id) activate(id);
+  });
 
   // Clicking a card/nav link fades the current page out first, then swaps -
   // a deliberate page-to-page jump rather than an instant content swap.
@@ -58,5 +67,5 @@ export function initRouter({ onEnter } = {}) {
     }, LEAVE_MS);
   });
 
-  activate(parseHash());
+  activate(parseHash() || "home");
 }

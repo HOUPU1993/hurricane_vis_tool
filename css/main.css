@@ -248,6 +248,45 @@ sup.cite a:hover { text-decoration: underline; }
 .coef-stars { font-size: 10px; fill: #f0b93a; font-weight: 700; }
 .coef-axis-tick { font-size: 9px; fill: var(--muted-dim); }
 
+/* ---- Page 7: national-study hurricane table --------------------------------- */
+.cat-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10.5px;
+  font-weight: 700; letter-spacing: 0.02em; margin-top: 4px;
+}
+.cat-badge.cat1 { background: rgba(27, 175, 122, 0.15); color: #4fd9a5; }
+.cat-badge.cat2 { background: rgba(237, 161, 0, 0.15); color: #f0b93a; }
+.cat-badge.cat3 { background: rgba(235, 104, 52, 0.18); color: #f2935f; }
+.cat-badge.cat4 { background: rgba(227, 73, 72, 0.15); color: #f27f7e; }
+.cat-badge.cat5 { background: rgba(139, 20, 20, 0.3); color: #ff8a8a; }
+#page-7 .data-table td { vertical-align: top; }
+
+/* ---- Page 7: external-tool embed (HEvOD / hurrevacorder.info) --------------- */
+.embed-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px;
+  padding: 16px; margin: 16px 0 8px;
+}
+.embed-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.embed-card-head h4 { margin: 0; font-size: 14px; color: #fff; }
+.embed-card-head a { font-size: 12.5px; white-space: nowrap; }
+.embed-frame-wrap { position: relative; width: 100%; height: 640px; border-radius: 8px; overflow: hidden; border: 1px solid var(--card-border); background: #0b0f1a; }
+.embed-frame-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.embed-note { font-size: 11.5px; color: var(--muted-dim); margin: 8px 0 0; }
+
+/* ---- Page 7: state data-collection status map -------------------------------- */
+#national-status-map { height: 420px; border-radius: 10px; overflow: hidden; border: 1px solid var(--card-border); margin: 16px 0 10px; }
+.status-legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 0 0 8px; }
+.status-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.status-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.state-label {
+  display: flex; align-items: center; justify-content: center; font-size: 10.5px; font-weight: 700;
+  color: #f2f4f8; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); pointer-events: none;
+}
+.leaflet-tooltip {
+  background: #12151f; color: #e5eaf5; border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px; font-size: 12px; line-height: 1.5; box-shadow: none;
+}
+.leaflet-tooltip-top:before { border-top-color: #12151f; }
+
 /* ---- placeholder pages (2, 6, 7) --------------------------------------- */
 .placeholder-page { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: 45vh; }
 .placeholder-badge {
