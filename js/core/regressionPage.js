@@ -15,11 +15,10 @@ function vifFlag(vif) {
 
 function renderVifTable(container) {
   const rows = VIF_TABLE.map((row) => {
-    const meta = FEATURE_META[row.feature];
     const flag = vifFlag(row.vif);
     return `
       <tr>
-        <td>${meta?.label ?? row.feature}</td>
+        <td><code>${row.feature}</code></td>
         <td class="data-table--num">${row.vif.toFixed(2)}</td>
         <td><span class="vif-flag ${flag.cls}">${flag.text}</span></td>
       </tr>`;
@@ -40,22 +39,28 @@ function renderVifTable(container) {
 }
 
 const KEY_ORDER = ["z_log_median_equity", "z_pct_active_mortgage", "z_median_loan_term_remaining", "z_lor_to_2022_owner"];
+const CONTROL_ORDER = Object.keys(FEATURE_META).filter((f) => !FEATURE_META[f].isKey);
 const MODEL_NAMES = ["Model 0", "Model 1", "Model 2", "Model 3", "Model 4"];
+
+// Renders one <feature, Model 0..4 coef/SE> row. feat is shown as its coded
+// z_*/z_log_* name (not the friendly label) so it's unambiguous these are
+// the standardized predictors, not raw variables.
+function comparisonRow(feat, entry) {
+  const cellByModel = new Array(5).fill("<span class=\"cmp-empty\">&ndash;</span>");
+  entry.modelIndex.forEach((modelIdx, i) => {
+    cellByModel[modelIdx] = `<span class="cmp-coef">${entry.coef[i]}</span><br><span class="cmp-se">${entry.se[i]}</span>`;
+  });
+  return `<tr><td><code>${feat}</code></td>${cellByModel.map((c) => `<td class="data-table--num">${c}</td>`).join("")}</tr>`;
+}
 
 function renderComparisonTable(container, dv) {
   const comp = MODEL_COMPARISON[dv.key];
-  const rows = KEY_ORDER.map((feat) => {
-    const meta = FEATURE_META[feat];
-    const kf = comp.keyFeatures[feat];
-    const cellByModel = new Array(5).fill("<span class=\"cmp-empty\">&ndash;</span>");
-    kf.modelIndex.forEach((modelIdx, i) => {
-      cellByModel[modelIdx] = `<span class="cmp-coef">${kf.coef[i]}</span><br><span class="cmp-se">${kf.se[i]}</span>`;
-    });
-    return `<tr><td>${meta.label}</td>${cellByModel.map((c) => `<td class="data-table--num">${c}</td>`).join("")}</tr>`;
-  }).join("");
+  const keyRows = KEY_ORDER.map((feat) => comparisonRow(feat, comp.keyFeatures[feat])).join("");
+  const controlRows = CONTROL_ORDER.map((feat) => comparisonRow(feat, comp.controlFeatures[feat])).join("");
 
   const infoRow = (label, values) =>
     `<tr class="cmp-info-row"><td>${label}</td>${values.map((v) => `<td class="data-table--num">${v}</td>`).join("")}</tr>`;
+  const infoRows = `${infoRow("R²", comp.r2)}${infoRow("Adj. R²", comp.adjR2)}${infoRow("N", comp.n)}`;
 
   container.innerHTML = `
     <h5>${dv.label}</h5>
@@ -63,13 +68,20 @@ function renderComparisonTable(container, dv) {
       <table class="data-table data-table--compact">
         <thead><tr><th>Key feature</th>${MODEL_NAMES.map((m) => `<th>${m}</th>`).join("")}</tr></thead>
         <tbody>
-          ${rows}
-          ${infoRow("R²", comp.r2)}
-          ${infoRow("Adj. R²", comp.adjR2)}
-          ${infoRow("N", comp.n)}
+          ${keyRows}
+          ${infoRows}
         </tbody>
       </table>
-    </div>`;
+    </div>
+    <details>
+      <summary>Show all ${CONTROL_ORDER.length} control variables</summary>
+      <div class="table-wrap">
+        <table class="data-table data-table--compact">
+          <thead><tr><th>Control</th>${MODEL_NAMES.map((m) => `<th>${m}</th>`).join("")}</tr></thead>
+          <tbody>${controlRows}</tbody>
+        </table>
+      </div>
+    </details>`;
 }
 
 export function initRegressionPage() {

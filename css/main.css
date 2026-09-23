@@ -188,7 +188,7 @@ sup.cite a:hover { text-decoration: underline; }
   text-align: right; padding-right: 8px; font-weight: 400; color: #c8c8c8; white-space: nowrap;
   font-size: 10.5px; position: sticky; left: 0; background: #000;
 }
-.corr-col-head { height: 130px; vertical-align: bottom; padding-bottom: 4px; }
+.corr-col-head { height: 210px; vertical-align: bottom; padding-bottom: 4px; }
 .corr-col-head span {
   display: inline-block; writing-mode: vertical-rl; transform: rotate(180deg);
   font-weight: 400; color: #c8c8c8; font-size: 10.5px; white-space: nowrap;
@@ -212,6 +212,20 @@ sup.cite a:hover { text-decoration: underline; }
 .cmp-empty { color: var(--muted-dim); }
 .cmp-info-row td { color: var(--muted); font-size: 11px; }
 .cmp-info-row td:first-child { color: var(--muted); font-style: italic; }
+.cmp-panel details { border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 12px; padding-top: 10px; }
+.cmp-panel summary { cursor: pointer; font-size: 12px; font-weight: 600; color: #9fb0d0; }
+.cmp-panel summary:hover { color: #dfe6f5; }
+.cmp-panel details .table-wrap { margin-top: 10px; }
+
+/* ---- Page 5: coded z_*/z_log_* variable names ------------------------------- */
+/* VIF table, comparison tables, and the variable-selection prose all show the
+   actual standardized predictor name (not a friendly label), so it reads as
+   what was estimated rather than a raw variable. */
+#page-5 code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em; color: #9fd8c4; background: rgba(27, 175, 122, 0.1);
+  padding: 1px 5px; border-radius: 4px;
+}
 
 /* ---- Page 5: Model 4 coefficient plots (the headline figure) --------------- */
 .coef-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 16px 0 12px; }
@@ -223,7 +237,7 @@ sup.cite a:hover { text-decoration: underline; }
 .coef-panel-note { font-size: 11px; color: var(--muted-dim); margin: 0 0 8px; }
 .coef-section-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.04em; fill: var(--muted-dim); }
 .coef-section-label--key { fill: #f0b93a; font-weight: 700; }
-.coef-row-label { font-size: 10px; fill: #d6d6d6; }
+.coef-row-label { font-size: 9.5px; fill: #d6d6d6; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
 .coef-zero-line { stroke: rgba(255, 255, 255, 0.25); stroke-width: 1; stroke-dasharray: 2, 2; }
 .coef-whisker { stroke-width: 1.6; }
 .coef-whisker.sig-none { opacity: 0.35; }

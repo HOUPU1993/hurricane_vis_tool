@@ -15,7 +15,9 @@
 // Rows are grouped: the four "key" hypothesis features first (highlighted),
 // then controls grouped by category, in FEATURE_META's own order - not
 // sorted by effect size, so a reader can find a specific variable by its
-// category rather than hunting through a magnitude-sorted list.
+// category rather than hunting through a magnitude-sorted list. Row labels
+// show the coded z_*/z_log_* predictor name (what was actually estimated),
+// not a friendly English label - the hover tooltip carries both.
 
 function starsFor(p) {
   if (p < 0.01) return "***";
@@ -98,9 +100,11 @@ export function renderCoefficientPlot(container, { dvKey, dvLabel, note, rows, f
       const sig = sigClass(r.p);
       const stars = starsFor(r.p);
 
-      // row label, clipped with a native tooltip for the full text
+      // row label shows the coded z_*/z_log_* predictor name (these are the
+      // standardized variables actually estimated, not the raw ones), with
+      // a native tooltip carrying both the code and the friendly label.
       svgParts.push(
-        `<text x="${PAD}" y="${(rowMidY + 4).toFixed(1)}" class="coef-row-label"><title>${meta.label} (${r.coef >= 0 ? "+" : ""}${r.coef.toFixed(4)}, p=${r.p.toFixed(3)})</title>${meta.label}</text>`
+        `<text x="${PAD}" y="${(rowMidY + 4).toFixed(1)}" class="coef-row-label"><title>${r.feature} - ${meta.label} (${r.coef >= 0 ? "+" : ""}${r.coef.toFixed(4)}, p=${r.p.toFixed(3)})</title>${r.feature}</text>`
       );
       // CI whisker
       svgParts.push(
@@ -108,7 +112,7 @@ export function renderCoefficientPlot(container, { dvKey, dvLabel, note, rows, f
       );
       // dot
       svgParts.push(
-        `<circle cx="${xDot.toFixed(1)}" cy="${rowMidY.toFixed(1)}" r="4" fill="${meta.color}" stroke="${meta.color}" class="coef-dot ${sig}"><title>${meta.label}: ${r.coef >= 0 ? "+" : ""}${r.coef.toFixed(4)} [${r.ciLow.toFixed(4)}, ${r.ciHigh.toFixed(4)}], p=${r.p.toFixed(3)} ${stars}</title></circle>`
+        `<circle cx="${xDot.toFixed(1)}" cy="${rowMidY.toFixed(1)}" r="4" fill="${meta.color}" stroke="${meta.color}" class="coef-dot ${sig}"><title>${r.feature}: ${r.coef >= 0 ? "+" : ""}${r.coef.toFixed(4)} [${r.ciLow.toFixed(4)}, ${r.ciHigh.toFixed(4)}], p=${r.p.toFixed(3)} ${stars}</title></circle>`
       );
       if (stars) {
         svgParts.push(
@@ -134,7 +138,7 @@ export function renderCoefficientPlot(container, { dvKey, dvLabel, note, rows, f
       <h4>${dvLabel}</h4>
       <p class="coef-panel-note">${note}</p>
     </div>
-    <svg viewBox="0 0 ${width + 30} ${plotHeight}" width="100%" height="${plotHeight}" role="img" aria-label="Model 4 standardized coefficients for ${dvLabel}">
+    <svg viewBox="0 0 ${width + 30} ${plotHeight}" width="100%" height="${plotHeight}" role="img" aria-label="Model 4 (full model) coefficients for ${dvLabel}">
       ${svgParts.join("")}
       ${axisParts}
     </svg>

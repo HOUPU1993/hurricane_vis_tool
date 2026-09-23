@@ -30,19 +30,16 @@ function textColorFor([r, g, b]) {
   return lum > 0.6 ? "#111" : "#fff";
 }
 
-function shortLabel(name) {
-  // Drop the z_/log_ transform prefixes for the axis labels - the table's
-  // own row order plus the page's prose already say what's standardized.
-  return name.replace(/^z_/, "").replace(/^log_/, "");
-}
-
 export function renderCorrHeatmap(container, { labels, matrix }) {
   const n = labels.length;
   const rows = [];
 
-  // header row
+  // header row - full coded z_*/z_log_* predictor names (not shortened),
+  // so it's unambiguous these are the standardized variables actually
+  // estimated. The 3 dependent variables have no z_ prefix - they aren't
+  // themselves standardized.
   const headerCells = labels
-    .map((l) => `<th class="corr-col-head"><span>${shortLabel(l)}</span></th>`)
+    .map((l) => `<th class="corr-col-head"><span>${l}</span></th>`)
     .join("");
   rows.push(`<tr><th class="corr-corner"></th>${headerCells}</tr>`);
 
@@ -62,7 +59,7 @@ export function renderCorrHeatmap(container, { labels, matrix }) {
         `<td class="corr-cell${diag}" style="background:${bg};color:${fg};"><span title="${labels[i]} × ${labels[j]}: r=${r.toFixed(3)}">${r.toFixed(2)}</span></td>`
       );
     }
-    rows.push(`<tr><th class="corr-row-head">${shortLabel(labels[i])}</th>${cells.join("")}</tr>`);
+    rows.push(`<tr><th class="corr-row-head">${labels[i]}</th>${cells.join("")}</tr>`);
   }
 
   container.innerHTML = `<table class="corr-table">${rows.join("")}</table>`;
