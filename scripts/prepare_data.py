@@ -42,6 +42,7 @@ KEEP_FIELDS = [
     "pct_cost_burden_50p",
     # Population & race
     "pct_65p",
+    "pct_homeownership",
     "pct_white",
     "pct_black",
     "pct_asian",
