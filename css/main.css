@@ -94,8 +94,9 @@ sup.cite a:hover { text-decoration: underline; }
 
 /* ---- pull-quote --------------------------------------------------------- */
 .pull-quote {
-  border-left: 3px solid #2a78d6; padding: 16px 20px; margin: 28px 0;
-  background: rgba(255, 255, 255, 0.04); font-size: 17px; line-height: 1.6; color: #fff;
+  border-left: 3px solid #2a78d6; padding: 18px 22px; margin: 32px 0;
+  background: rgba(255, 255, 255, 0.04); font-size: 21px; font-style: italic;
+  line-height: 1.55; color: #fff;
 }
 
 /* ---- research-question cards -------------------------------------------- */
@@ -125,9 +126,9 @@ sup.cite a:hover { text-decoration: underline; }
 .references { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.12); }
 .references h3 { margin-top: 0; }
 .references ol { padding-left: 20px; margin: 0; }
-.references li { font-size: 12.5px; color: var(--muted); line-height: 1.7; margin-bottom: 10px; }
-.references li a { color: #6da7ec; word-break: break-word; }
-.references li a.archived { color: var(--muted-dim); font-size: 11.5px; margin-left: 2px; }
+/* Plain APA-style text - no links, so URLs/DOIs just wrap as regular text
+   in the same muted color as the rest of the entry. */
+.references li { font-size: 12.5px; color: var(--muted); line-height: 1.7; margin-bottom: 10px; word-break: break-word; }
 
 /* ---- placeholder pages (2, 5, 6, 7) --------------------------------------- */
 .placeholder-page { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: 45vh; }
