@@ -10,7 +10,15 @@
 // never keeps ticking in the background.
 export function loopTypeSequence(
   segments,
-  { typeSpeed = 75, holdMs = 5000, pauseMs = 350, segmentPauseMs = 250, onFirstComplete } = {}
+  {
+    typeSpeed = 75,
+    holdMs = 5000,
+    pauseMs = 350,
+    segmentPauseMs = 250,
+    onFirstComplete,
+    onHoldStart,
+    onHoldEnd,
+  } = {}
 ) {
   const items = segments.filter((s) => s && s.el && s.text);
   if (!items.length) return { stop() {} };
@@ -50,10 +58,12 @@ export function loopTypeSequence(
     }
     // Hold the fully-typed text on screen, then clear everything at once
     // (rather than animating a backspace) and start the sequence over.
+    if (onHoldStart) onHoldStart();
     schedule(resetAndRetype, holdMs);
   }
 
   function resetAndRetype() {
+    if (onHoldEnd) onHoldEnd();
     for (const seg of items) seg.el.textContent = "";
     schedule(() => typeSegment(0, 0), pauseMs);
   }

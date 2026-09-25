@@ -8,6 +8,7 @@ import { initTerrainScene } from "./core/terrainScene.js";
 import { initRegressionPage } from "./core/regressionPage.js";
 import { initNationalStudyMap } from "./core/nationalStudyMap.js";
 import { initOptionWheel, initWheelCitationJump } from "./core/optionWheel.js";
+import { initTechText } from "./core/techText.js";
 
 initScrollReveal();
 initWheelCitationJump();
@@ -64,6 +65,23 @@ let regressionPageLoaded = false;
 let nationalStudyMap = null;
 let mathRenderedPage7 = false;
 let terrainScene = null;
+let heroTechText = null;
+
+// Every content page (all but Page 3) has exactly one <h2>, static in the
+// DOM from page load - Tech Text is applied to it once, lazily, on first
+// visit (the same first-visit-only pattern used for KaTeX/the regression
+// page/the national map below), since it needs the heading's real on-screen
+// size to lay out correctly, and that isn't available before the page's
+// display:none is lifted.
+const techTextPages = new Set();
+function initHeadingTechText(pageId) {
+  if (techTextPages.has(pageId)) return;
+  techTextPages.add(pageId);
+  const heading = document.querySelector(`#page-${pageId} h2`);
+  if (!heading) return;
+  const controller = initTechText(heading);
+  if (controller) controller.show();
+}
 
 // Shared by Page 2 and Page 7, both authored with the same \(...\)/\[...\]
 // KaTeX auto-render delimiters (loaded via CDN in index.html).
@@ -96,7 +114,21 @@ initRouter({
           { el: heroSubtitleEl, text: HERO_SUBTITLE, typeSpeed: 30 },
           { el: heroLedeEl, text: HERO_LEDE, typeSpeed: 24 },
         ],
-        { holdMs: 5000, onFirstComplete: () => heroEl.classList.add("typing-done") }
+        {
+          holdMs: 5000,
+          onFirstComplete: () => heroEl.classList.add("typing-done"),
+          // Tech Text only ever overlays the title during the "settled"
+          // hold window between typing passes - never while the typewriter
+          // is actively writing/clearing it, so it can't fight that
+          // character-by-character effect (left untouched, as asked).
+          onHoldStart: () => {
+            if (!heroTechText) heroTechText = initTechText(heroTitleEl, { reachRatio: 0.6, speckCount: 10 });
+            if (heroTechText) heroTechText.show();
+          },
+          onHoldEnd: () => {
+            if (heroTechText) heroTechText.hide();
+          },
+        }
       );
       if (!terrainScene) {
         terrainScene = initTerrainScene(terrainRootEl);
@@ -110,7 +142,17 @@ initRouter({
         heroTypeLoop.stop();
         heroTypeLoop = null;
       }
+      // Belt-and-suspenders: stop() above only halts the timer chain, so if
+      // the page is left mid-hold (Tech Text actively overlaying the title),
+      // this guarantees the title's DOM text is left opaque and normal
+      // rather than stuck transparent under a now-frozen canvas.
+      if (heroTechText) heroTechText.hide();
       if (terrainScene) terrainScene.stop();
+    }
+
+    // Every content page but Page 3 gets Tech Text on its single <h2>.
+    if (id !== "home" && id !== "3") {
+      initHeadingTechText(id);
     }
 
     // Page 2's methodology math is authored with the same \(...\)/\[...\]
