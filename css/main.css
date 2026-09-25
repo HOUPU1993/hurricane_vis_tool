@@ -422,7 +422,7 @@ sup.cite a:hover { text-decoration: underline; }
   font-size: 15px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cat-color, #fff); margin: 0 0 16px;
   padding-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-.profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
 .profile-card {
   background: var(--card-bg); border: 1px solid var(--card-border); border-top: 3px solid var(--cat-color, #2a78d6);
   border-radius: 10px; padding: 16px; transition: transform 0.2s ease, border-color 0.2s ease;
@@ -439,6 +439,19 @@ sup.cite a:hover { text-decoration: underline; }
 .profile-hist { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.08); }
 .profile-hist .legend-title { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #8a8a8a; margin-bottom: 6px; }
 .profile-hist svg { display: block; }
+
+/* Three small scatters (feature vs. each of the three outcomes) - see
+   js/core/scatterPlot.js. Same footer-row treatment as .profile-hist. */
+.profile-scatters { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.profile-scatters .legend-title { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #8a8a8a; margin-bottom: 6px; }
+.scatter-row { display: flex; gap: 8px; }
+.scatter-panel { flex: 1 1 0; min-width: 0; }
+.scatter-label {
+  font-size: 9.5px; color: #8a8a8a; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.scatter-svg { display: block; width: 100%; }
+.scatter-stat { font-size: 9.5px; color: var(--muted-dim); margin-top: 3px; font-variant-numeric: tabular-nums; }
+.scatter-empty { font-size: 10px; color: var(--muted-dim); padding: 14px 0; text-align: center; }
 
 /* ==========================================================================
    Page 3 - the evacuation dashboard (map + sidebar). Fills the viewport

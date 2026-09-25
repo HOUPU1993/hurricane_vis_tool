@@ -6,6 +6,15 @@
 // can contain "&" and similar characters that shouldn't be treated as markup.
 import { computeDomain } from "./colorScale.js";
 import { renderHistogram } from "./histogram.js";
+import { renderScatterRow } from "./scatterPlot.js";
+
+// The three core outcome variables (see js/metrics/evacuation.js) - every
+// other category's cards get a scatter of feature-vs-outcome for each of
+// these three; the evacuation category itself is skipped below since its
+// own metrics ARE these outcomes, so plotting them against themselves would
+// be meaningless.
+const OUTCOME_FIELDS = ["evacuation_rate", "median_evacuation_distance_km", "median_return_days"];
+const EVACUATION_CATEGORY = "Mobile Phone Evacuation Detection";
 
 const ROWS = [
   ["Min", "min"],
@@ -42,6 +51,9 @@ export async function renderProfileCards(container, categories) {
   }
 
   container.textContent = "";
+
+  const evacCategory = categories.find((c) => c.name === EVACUATION_CATEGORY);
+  const dvMetrics = evacCategory ? evacCategory.metrics.filter((m) => OUTCOME_FIELDS.includes(m.field)) : [];
 
   for (const cat of categories) {
     const section = document.createElement("section");
@@ -103,6 +115,12 @@ export async function renderProfileCards(container, categories) {
       const domain = computeDomain(geoData.features, metric);
       renderHistogram(histWrap, domain, metric);
       card.appendChild(histWrap);
+
+      // Scatter against each of the three outcomes - every category except
+      // the outcomes' own (see OUTCOME_FIELDS/EVACUATION_CATEGORY above).
+      if (cat.name !== EVACUATION_CATEGORY && dvMetrics.length === OUTCOME_FIELDS.length) {
+        renderScatterRow(card, metric, dvMetrics, geoData.features);
+      }
 
       const nEl = document.createElement("p");
       nEl.className = "profile-n";
