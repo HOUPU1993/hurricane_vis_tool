@@ -4,12 +4,11 @@ import { initDashboard } from "./main.js";
 import { renderProfileCards } from "./core/profileCards.js";
 import { CATEGORIES } from "./metrics/index.js";
 import { loopTypeSequence } from "./core/typewriter.js";
-import { initSpotlight } from "./core/spotlight.js";
+import { initTerrainScene } from "./core/terrainScene.js";
 import { initRegressionPage } from "./core/regressionPage.js";
 import { initNationalStudyMap } from "./core/nationalStudyMap.js";
 
 initScrollReveal();
-initSpotlight();
 
 // Duplicated from index.html's static hero markup (which stays as plain
 // text for no-JS/SEO/accessibility) so the typewriter has a clean string -
@@ -25,6 +24,7 @@ const heroTitleEl = document.getElementById("hero-title");
 const heroSubtitleEl = document.querySelector(".hero-subtitle");
 const heroLedeEl = document.querySelector(".hero-lede");
 const heroEl = document.querySelector(".hero");
+const terrainRootEl = document.getElementById("terrain-root");
 
 let dashboard = null;
 let profileCardsLoaded = false;
@@ -34,6 +34,7 @@ let regressionPageLoaded = false;
 let nationalStudyMap = null;
 let nationalMapLoaded = false;
 let mathRenderedPage7 = false;
+let terrainScene = null;
 
 // Shared by Page 2 and Page 7, both authored with the same \(...\)/\[...\]
 // KaTeX auto-render delimiters (loaded via CDN in index.html).
@@ -68,11 +69,19 @@ initRouter({
         ],
         { holdMs: 5000, onFirstComplete: () => heroEl.classList.add("typing-done") }
       );
-    } else if (heroTypeLoop) {
-      // Leaving the home page - stop the loop rather than let it keep
-      // ticking (and touching a hidden element) in the background.
-      heroTypeLoop.stop();
-      heroTypeLoop = null;
+      if (!terrainScene) {
+        terrainScene = initTerrainScene(terrainRootEl);
+      } else {
+        terrainScene.resume();
+      }
+    } else {
+      if (heroTypeLoop) {
+        // Leaving the home page - stop the loop rather than let it keep
+        // ticking (and touching a hidden element) in the background.
+        heroTypeLoop.stop();
+        heroTypeLoop = null;
+      }
+      if (terrainScene) terrainScene.stop();
     }
 
     // Page 2's methodology math is authored with the same \(...\)/\[...\]

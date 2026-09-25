@@ -2,7 +2,21 @@
 // Each page lives at #/<id> and its section is #page-<id>. Pages 1-7 map
 // 1:1 to hash segments; the landing screen is "home".
 const PAGE_IDS = ["home", "1", "2", "3", "4", "5", "6", "7"];
-const LEAVE_MS = 200; // matches the .page-leaving CSS animation duration
+const CURTAIN_MS = 420; // matches the #page-curtain CSS transition duration
+
+// Same seven accent colors the old homepage tile grid used per section -
+// kept here as the single source of truth now that the tiles are gone, so
+// the curtain transition can still color itself per destination page.
+const PAGE_ACCENTS = {
+  home: "#23232b",
+  "1": "#2a78d6",
+  "2": "#eb6834",
+  "3": "#1baf7a",
+  "4": "#eda100",
+  "5": "#e87ba4",
+  "6": "#008300",
+  "7": "#4a3aa7",
+};
 
 export function initRouter({ onEnter } = {}) {
   const sections = new Map();
@@ -47,8 +61,22 @@ export function initRouter({ onEnter } = {}) {
     if (id) activate(id);
   });
 
-  // Clicking a card/nav link fades the current page out first, then swaps -
-  // a deliberate page-to-page jump rather than an instant content swap.
+  // A single curtain element, reused for every navigation rather than
+  // recreated per click - a solid, destination-colored panel sweeps in,
+  // the hash change (and the instant page--active swap it triggers)
+  // happens while it's fully covering the screen, then it sweeps away to
+  // reveal the new page. Content itself still gets .page-enter's fade+
+  // drift underneath, so the reveal isn't a hard cut.
+  let curtain = null;
+  function getCurtain() {
+    if (curtain) return curtain;
+    curtain = document.createElement("div");
+    curtain.id = "page-curtain";
+    curtain.setAttribute("aria-hidden", "true");
+    document.body.appendChild(curtain);
+    return curtain;
+  }
+
   document.addEventListener("click", (e) => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     const link = e.target.closest('a[href^="#/"]');
@@ -59,12 +87,19 @@ export function initRouter({ onEnter } = {}) {
     if (!current || current[0] === (sections.has(targetId) ? targetId : "home")) return;
 
     e.preventDefault();
-    const [, currentEl] = current;
-    currentEl.classList.add("page-leaving");
+    const el = getCurtain();
+    el.style.background = PAGE_ACCENTS[targetId] || PAGE_ACCENTS.home;
+    el.style.transition = "none";
+    el.style.transform = "translateX(-101%)";
+    void el.offsetWidth; // force reflow so the next transform actually animates
+    el.style.transition = `transform ${CURTAIN_MS}ms cubic-bezier(.6,0,.2,1)`;
+    el.style.transform = "translateX(0%)";
+
     setTimeout(() => {
-      currentEl.classList.remove("page-leaving");
       location.hash = `#/${targetId}`;
-    }, LEAVE_MS);
+      el.style.transition = `transform ${CURTAIN_MS}ms cubic-bezier(.6,0,.2,1)`;
+      el.style.transform = "translateX(101%)";
+    }, CURTAIN_MS + 40);
   });
 
   activate(parseHash() || "home");

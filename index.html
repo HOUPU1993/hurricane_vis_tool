@@ -35,7 +35,16 @@
 <!-- Home / landing                                                     -->
 <!-- ================================================================== -->
 <section id="page-home" class="page page--home">
-  <div class="bg-reveal" aria-hidden="true"></div>
+  <div class="terrain-root" id="terrain-root" aria-hidden="true">
+    <div class="scene-stage">
+      <div class="rotator">
+        <div class="floor"></div>
+      </div>
+      <div class="terrain-glow"></div>
+      <div class="terrain-fade"></div>
+    </div>
+    <div class="terrain-labels"></div>
+  </div>
 
   <div class="hero">
     <h1 class="hero-title" id="hero-title" aria-live="polite">Does Place Keep People Home?</h1>
@@ -52,43 +61,10 @@
     <a class="hero-cta" href="#/1">Start exploring &darr;</a>
   </div>
 
-  <nav class="page-grid" aria-label="Study sections">
-    <a class="page-tile" href="#/1" style="--i:0; --accent:#2a78d6;">
-      <span class="page-tile-num">01</span>
-      <span class="page-tile-title">Research Background</span>
-      <span class="page-tile-desc">Hurricane Ian, government intervention, and the research questions</span>
-    </a>
-    <a class="page-tile" href="#/2" style="--i:1; --accent:#eb6834;">
-      <span class="page-tile-num">02</span>
-      <span class="page-tile-title">Data &amp; Methodology</span>
-      <span class="page-tile-desc">Data sources and the evacuation-detection method</span>
-    </a>
-    <a class="page-tile" href="#/3" style="--i:2; --accent:#1baf7a;">
-      <span class="page-tile-num">03</span>
-      <span class="page-tile-title">Visualization Patterns</span>
-      <span class="page-tile-desc">Interactive map of evacuation and social vulnerability</span>
-    </a>
-    <a class="page-tile" href="#/4" style="--i:3; --accent:#eda100;">
-      <span class="page-tile-num">04</span>
-      <span class="page-tile-title">Study Area Profile</span>
-      <span class="page-tile-desc">Summary statistics for every mapped variable</span>
-    </a>
-    <a class="page-tile" href="#/5" style="--i:4; --accent:#e87ba4;">
-      <span class="page-tile-num">05</span>
-      <span class="page-tile-title">Regression Results</span>
-      <span class="page-tile-desc">What predicts evacuation non-compliance</span>
-    </a>
-    <a class="page-tile" href="#/6" style="--i:5; --accent:#008300;">
-      <span class="page-tile-num">06</span>
-      <span class="page-tile-title">Conclusion</span>
-      <span class="page-tile-desc">What we found, and what it means</span>
-    </a>
-    <a class="page-tile" href="#/7" style="--i:6; --accent:#4a3aa7;">
-      <span class="page-tile-num">07</span>
-      <span class="page-tile-title">Next Steps</span>
-      <span class="page-tile-desc">Open questions and future work</span>
-    </a>
-  </nav>
+  <p class="terrain-caption">
+    <strong>Evacuation-rate terrain</strong> &mdash; elevation is mean detected evacuation rate per
+    census block group across the study corridor (data/blockgroups.geojson).
+  </p>
 
   <footer class="home-footer reveal">
     <p>A research project of the
