@@ -6,11 +6,12 @@
 // rotated with rotateX, and each bar cancels that rotation on itself via
 // the opposite rotateX so its own `height` stays world-vertical instead of
 // following the floor's tilt), then the whole scene gets a slow autonomous
-// sway plus a small pointer-driven tilt on top. A tab row (see
-// .terrain-metric-tabs in index.html) switches which metric drives bar
-// height/color, cross-fading in place rather than rebuilding the grid, and
-// auto-cycles through the three every ~6s whenever the pointer isn't over
-// the terrain.
+// sway plus a small pointer-driven tilt on top. A small, dim caption (see
+// .terrain-metric-tabs in index.html) names which metric currently drives
+// bar height/color and always auto-cycles through the three every ~6s
+// (cross-fading in place via CSS transitions, not rebuilding the grid) -
+// it's illustrative, not a control the reader is expected to operate, so
+// it's never gated behind a click or paused on hover.
 //
 // To regenerate js/data/homeTerrain.js after data/blockgroups.geojson
 // changes, see that file's own header comment for the exact method.
@@ -62,17 +63,20 @@ function colorFor(h) {
   return `linear-gradient(180deg, rgba(237,161,0,${(0.75 + t * 0.25).toFixed(3)}), rgba(232,123,164,0.75))`;
 }
 
-// Static screen-space label positions, tuned once against the resting
-// (un-tilted) view. They don't re-project every frame as the scene sways -
-// a small mismatch during interaction is an acceptable trade for staying
-// pure-CSS; a future pass could project properly if that drift bothers.
-// Sanibel Island is omitted here even though it's in the data - it sits
-// right behind the hero title at this layout's scale, and its peak is
-// close enough to Fort Myers Beach's that losing it costs little.
-const LABEL_SCREEN_POS = {
-  "Fort Myers Beach": { left: "38%", top: "68%", lx: 46, ly: -8 },
-  "Cape Coral": { left: "55%", top: "60%", lx: 46, ly: -14 },
-  "Pine Island": { left: "50%", top: "50%", lx: 44, ly: 6 },
+// Which of TERRAIN_LABELS get a text label drawn (all are used to look up
+// a real grid cell regardless). Sanibel Island is left out even though
+// it's in the data - it sits right behind the hero title at this layout's
+// scale, and its peak is close enough to Fort Myers Beach's that losing it
+// costs little. Each entry's (lx, ly) is a small fixed pixel offset from
+// the dot to its text - the dot's own position is never hand-tuned (see
+// below): it's a real child of the target grid cell's anchor, so it sits
+// exactly at that bar's base and sways/tilts with the rest of the terrain
+// via ordinary CSS 3D inheritance, and the text+leader-line are
+// re-projected from the dot's actual on-screen position every frame.
+const VISIBLE_LABELS = {
+  "Fort Myers Beach": { lx: 50, ly: -30 },
+  "Cape Coral": { lx: 64, ly: -4 },
+  "Pine Island": { lx: 60, ly: 26 },
 };
 
 export function initTerrainScene(rootEl) {
@@ -87,6 +91,7 @@ export function initTerrainScene(rootEl) {
 
   const frag = document.createDocumentFragment();
   const bars = []; // parallel to TERRAIN_HEIGHTS* - index = r * TERRAIN_COLS + c
+  const anchors = []; // same indexing - used to anchor label dots to real cells
   for (let r = 0; r < TERRAIN_ROWS; r++) {
     for (let c = 0; c < TERRAIN_COLS; c++) {
       const x = (c - TERRAIN_COLS / 2) * SPACING;
@@ -105,6 +110,7 @@ export function initTerrainScene(rootEl) {
       anchor.appendChild(bar);
       frag.appendChild(anchor);
       bars.push(bar);
+      anchors.push(anchor);
     }
   }
   floor.style.transform = `rotateX(${FLOOR_TILT_DEG}deg)`;
@@ -125,47 +131,68 @@ export function initTerrainScene(rootEl) {
   }
   renderMetric(METRICS[0].grid);
 
-  if (labelsWrap) {
-    for (const label of TERRAIN_LABELS) {
-      const pos = LABEL_SCREEN_POS[label.name];
-      if (!pos) continue;
-      const wrap = document.createElement("div");
-      wrap.className = "terrain-label";
-      wrap.style.left = pos.left;
-      wrap.style.top = pos.top;
-      const textLeft = pos.lx + (pos.lx < 0 ? -6 : 6);
-      wrap.innerHTML = `
-        <span class="terrain-label-dot"></span>
-        <svg width="${Math.abs(pos.lx) + 4}" height="${Math.abs(pos.ly) + 4}"
-             style="left:${Math.min(pos.lx, 0)}px; top:${Math.min(pos.ly, 0)}px;">
-          <line x1="${pos.lx < 0 ? Math.abs(pos.lx) : 0}" y1="${pos.ly < 0 ? Math.abs(pos.ly) : 0}"
-                x2="${pos.lx < 0 ? 0 : pos.lx}" y2="${pos.ly < 0 ? 0 : pos.ly}"
-                stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
-        </svg>
-        <span class="terrain-label-txt" style="left:${textLeft}px; top:${pos.ly - 6}px;
-          ${pos.lx < 0 ? "transform:translateX(-100%);" : ""}">${label.name}</span>`;
-      labelsWrap.appendChild(wrap);
+  // Each label's dot is a real child of its target cell's anchor - not a
+  // hand-tuned screen position - so it sits exactly at that bar's base and
+  // inherits the floor's tilt and the rotator's sway/pointer-tilt through
+  // ordinary CSS 3D transform inheritance, the same as the bars themselves.
+  // The text + leader line stay 2D (so they read upright rather than
+  // tilting with the scene), but are re-projected every tick from the
+  // dot's real getBoundingClientRect(), so they track the dot precisely
+  // instead of drifting out of sync as the scene sways.
+  const liveLabels = [];
+  for (const label of TERRAIN_LABELS) {
+    const index = label.row * TERRAIN_COLS + label.col;
+    const anchor = anchors[index];
+    if (!anchor) continue;
+
+    const dot = document.createElement("div");
+    dot.className = "terrain-dot";
+    dot.style.transform = `rotateX(${-FLOOR_TILT_DEG}deg)`;
+    anchor.appendChild(dot);
+
+    const offset = VISIBLE_LABELS[label.name];
+    if (!offset || !labelsWrap) continue;
+
+    const wrap = document.createElement("div");
+    wrap.className = "terrain-label";
+    const textLeft = offset.lx + (offset.lx < 0 ? -6 : 6);
+    wrap.innerHTML = `
+      <svg width="${Math.abs(offset.lx) + 4}" height="${Math.abs(offset.ly) + 4}"
+           style="left:${Math.min(offset.lx, 0)}px; top:${Math.min(offset.ly, 0)}px;">
+        <line x1="${offset.lx < 0 ? Math.abs(offset.lx) : 0}" y1="${offset.ly < 0 ? Math.abs(offset.ly) : 0}"
+              x2="${offset.lx < 0 ? 0 : offset.lx}" y2="${offset.ly < 0 ? 0 : offset.ly}"
+              stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+      </svg>
+      <span class="terrain-label-txt" style="left:${textLeft}px; top:${offset.ly - 6}px;
+        ${offset.lx < 0 ? "transform:translateX(-100%);" : ""}">${label.name}</span>`;
+    labelsWrap.appendChild(wrap);
+    liveLabels.push({ dot, wrap });
+  }
+
+  function updateLabelPositions() {
+    if (!labelsWrap || liveLabels.length === 0) return;
+    const wrapRect = labelsWrap.getBoundingClientRect();
+    for (const { dot, wrap } of liveLabels) {
+      const r = dot.getBoundingClientRect();
+      const x = r.left + r.width / 2 - wrapRect.left;
+      const y = r.top + r.height / 2 - wrapRect.top;
+      wrap.style.left = `${x}px`;
+      wrap.style.top = `${y}px`;
     }
   }
 
   // Gentle autonomous sway (a slow sine, not a full spin) plus a pointer-
   // driven tilt on top, lerped so it trails the cursor smoothly. Stopped
   // whenever the home page isn't the active page (see js/app.js) so it
-  // never keeps animating in the background. The same pointer position also
-  // decides whether the metric tabs' auto-cycle should be paused (below) -
-  // the terrain itself is decorative (pointer-events: none), so hovering is
-  // inferred from geometry rather than a real mouseenter/mouseleave on it.
+  // never keeps animating in the background.
   let raf = null;
   let t = 0;
   let mx = 0, my = 0, tmx = 0, tmy = 0;
-  let hoveringTerrain = false;
 
   function onPointerMove(e) {
     const rect = stage.getBoundingClientRect();
     tmx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
     tmy = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-    hoveringTerrain =
-      e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
   }
   window.addEventListener("pointermove", onPointerMove);
 
@@ -176,18 +203,21 @@ export function initTerrainScene(rootEl) {
     const swayZ = Math.sin(t) * 6;
     const swayX = Math.sin(t * 0.6) * 1.5;
     rotator.style.transform = `rotateZ(${(swayZ + mx * 10).toFixed(2)}deg) rotateX(${(swayX + my * -4).toFixed(2)}deg)`;
+    updateLabelPositions();
     raf = requestAnimationFrame(tick);
   }
   tick();
 
-  // Metric tabs - click to switch immediately; otherwise auto-cycle through
-  // the three every AUTO_CYCLE_MS while the pointer isn't over the terrain.
+  // Metric caption - a small, dim, illustrative readout (see
+  // .terrain-metric-tabs/.terrain-metric-tab in main.css: no button chrome,
+  // just dim text with the current one bright), still clickable but never
+  // required - it always auto-cycles every AUTO_CYCLE_MS on its own.
   const tabsEl = document.getElementById("terrainMetricTabs");
   const tabButtons = tabsEl ? [...tabsEl.querySelectorAll(".terrain-metric-tab")] : [];
   let activeIndex = 0;
   let cycleTimer = null;
 
-  function setActive(index, { userInitiated = false } = {}) {
+  function setActive(index) {
     activeIndex = index;
     renderMetric(METRICS[index].grid);
     for (const btn of tabButtons) {
@@ -195,15 +225,11 @@ export function initTerrainScene(rootEl) {
       btn.classList.toggle("terrain-metric-tab--active", active);
       btn.setAttribute("aria-selected", String(active));
     }
-    if (userInitiated) restartCycle();
   }
 
   function restartCycle() {
     if (cycleTimer) clearInterval(cycleTimer);
-    cycleTimer = setInterval(() => {
-      if (hoveringTerrain) return; // paused while the reader's looking at it
-      setActive((activeIndex + 1) % METRICS.length);
-    }, AUTO_CYCLE_MS);
+    cycleTimer = setInterval(() => setActive((activeIndex + 1) % METRICS.length), AUTO_CYCLE_MS);
   }
 
   if (tabsEl) {
@@ -211,7 +237,10 @@ export function initTerrainScene(rootEl) {
       const btn = e.target.closest(".terrain-metric-tab");
       if (!btn) return;
       const idx = METRICS.findIndex((m) => m.key === btn.dataset.metric);
-      if (idx >= 0) setActive(idx, { userInitiated: true });
+      if (idx >= 0) {
+        setActive(idx);
+        restartCycle(); // a manual pick still gets the full interval before auto-advancing again
+      }
     });
   }
   restartCycle();

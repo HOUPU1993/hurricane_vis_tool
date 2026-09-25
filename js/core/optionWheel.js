@@ -43,13 +43,13 @@ export function initOptionWheel(rootEl) {
   // /components/option-wheel) - a compact sidebar-sized tuning rather than
   // their big hero-list demo's defaults.
   const cfg = {
-    fontSizePx: 14,
-    spacing: 1.7,
+    fontSizePx: 17,
+    spacing: 1.65,
     curve: 1,
     tilt: 6,
-    blur: 2,
-    fade: 0.26,
-    minOpacity: 0.08,
+    blur: 1.1,
+    fade: 0.16,
+    minOpacity: 0.32,
     smoothing: 180,
     textColor: "#7d7d7d",
     activeColor: "#ffffff",
@@ -70,6 +70,7 @@ export function initOptionWheel(rootEl) {
     btn.tabIndex = -1;
     btn.dataset.wheelTarget = id;
     btn.dataset.wheelIndex = String(i);
+    btn.style.fontSize = `${cfg.fontSizePx}px`;
     dial.appendChild(btn);
     return btn;
   });

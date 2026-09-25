@@ -104,13 +104,17 @@ initRouter({
       if (heroTypeLoop) heroTypeLoop.stop();
       heroTypeLoop = loopTypeSequence(
         [
-          // The title keeps a slow, dramatic pace; the subtitle/lede are
-          // sped up so the whole hero (title+subtitle+lede is ~470
-          // characters) still finishes in a reasonable time instead of a
-          // single pass taking most of a minute at the title's
-          // per-character speed. Holds fully typed for 5s, then clears
-          // and retypes - no backspace animation.
-          { el: heroTitleEl, text: HERO_TITLE },
+          // The title keeps a slow, dramatic pace on the very first
+          // impression only (loopTypeSpeed takes over on every retype
+          // after that - see js/core/typewriter.js - so the title doesn't
+          // sit there slowly retyping alone for ~2s with the rest of the
+          // hero still blank on every later pass). The subtitle/lede are
+          // sped up throughout so the whole hero (title+subtitle+lede is
+          // ~470 characters) still finishes in a reasonable time instead
+          // of a single pass taking most of a minute at the title's
+          // original per-character speed. Holds fully typed for 5s, then
+          // clears and retypes - no backspace animation.
+          { el: heroTitleEl, text: HERO_TITLE, loopTypeSpeed: 22 },
           { el: heroSubtitleEl, text: HERO_SUBTITLE, typeSpeed: 30 },
           { el: heroLedeEl, text: HERO_LEDE, typeSpeed: 24 },
         ],

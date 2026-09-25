@@ -45,7 +45,13 @@ export function loopTypeSequence(
     const seg = items[segIndex];
     render(seg, charIndex);
     if (charIndex < seg.text.length) {
-      schedule(() => typeSegment(segIndex, charIndex + 1), seg.typeSpeed ?? typeSpeed);
+      // The title's dramatic, slow pace only makes sense for the very
+      // first impression - once the loop is retyping (firstCompleteFired),
+      // a segment can opt into a faster loopTypeSpeed instead, so the rest
+      // of the hero (subtitle/lede) isn't left sitting blank for seconds
+      // while just the title retypes alone at its original slow pace.
+      const speed = firstCompleteFired ? seg.loopTypeSpeed ?? seg.typeSpeed ?? typeSpeed : seg.typeSpeed ?? typeSpeed;
+      schedule(() => typeSegment(segIndex, charIndex + 1), speed);
       return;
     }
     if (segIndex < items.length - 1) {

@@ -320,6 +320,13 @@ sup.cite a:hover { text-decoration: underline; }
   position: absolute; left: 0; bottom: 0; transform-origin: 50% 100%; border-radius: 2px 2px 0 0;
   transition: height 0.6s ease, background 0.6s ease, box-shadow 0.6s ease;
 }
+/* A real 3D sibling of the bar (js/core/terrainScene.js), not a hand-tuned
+   screen position - it sits at its cell's exact base and sways/tilts with
+   the rest of the scene through ordinary CSS 3D inheritance. */
+.terrain-dot {
+  position: absolute; left: -2px; bottom: -2px; width: 4px; height: 4px; border-radius: 50%;
+  background: #e87ba4; box-shadow: 0 0 6px 1px rgba(232, 123, 164, 0.7); transform-origin: 50% 100%;
+}
 
 .terrain-glow {
   position: absolute; inset: 0; pointer-events: none;
@@ -330,24 +337,23 @@ sup.cite a:hover { text-decoration: underline; }
   background: radial-gradient(ellipse 70% 65% at 74% 66%, transparent 38%, #000 92%);
 }
 
+/* A small, dim illustrative caption sitting on the graphic itself (bottom
+   edge of the terrain box) rather than a page-level control - it always
+   auto-cycles on its own, so this is deliberately understated: no pill/
+   border chrome, just dim text with the current metric brighter. */
 .terrain-metric-tabs {
-  position: absolute; z-index: 3; top: 8%; right: 4.5%; display: flex; gap: 6px;
+  position: absolute; z-index: 3; bottom: 5%; right: 5%; display: flex; gap: 10px;
+  font-size: 11px; letter-spacing: 0.02em;
 }
 .terrain-metric-tab {
-  font-family: inherit; font-size: 11.5px; letter-spacing: 0.02em; padding: 8px 14px;
-  border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(0, 0, 0, 0.45); color: var(--muted); cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  font-family: inherit; font-size: inherit; padding: 2px 0;
+  border: none; background: none; color: rgba(255, 255, 255, 0.28); cursor: pointer;
+  transition: color 0.3s ease;
 }
-.terrain-metric-tab:hover { color: #fff; border-color: rgba(255, 255, 255, 0.4); }
-.terrain-metric-tab--active {
-  color: #fff; border-color: rgba(232, 123, 164, 0.75);
-  background: linear-gradient(135deg, rgba(74, 58, 167, 0.6), rgba(232, 123, 164, 0.4));
-  box-shadow: 0 0 14px rgba(232, 123, 164, 0.25);
-}
+.terrain-metric-tab:hover { color: rgba(255, 255, 255, 0.6); }
+.terrain-metric-tab--active { color: rgba(255, 255, 255, 0.75); }
 @media (max-width: 640px) {
-  .terrain-metric-tabs { top: 3%; right: 4%; }
-  .terrain-metric-tab { font-size: 10.5px; padding: 6px 10px; }
+  .terrain-metric-tabs { bottom: 4%; right: 4%; }
   /* The 72% rightward position is tuned against the desktop hero's own
      width/position - on a narrow viewport that just pushes the terrain
      further behind the (now full-width, wrapping) hero text instead of
@@ -363,10 +369,6 @@ sup.cite a:hover { text-decoration: underline; }
   color: #cfcfcf; white-space: nowrap;
 }
 .terrain-label svg { position: absolute; overflow: visible; }
-.terrain-label-dot {
-  position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #e87ba4;
-  box-shadow: 0 0 6px 1px rgba(232, 123, 164, 0.7);
-}
 .terrain-label-txt { position: absolute; }
 
 .hero { position: absolute; z-index: 2; left: 6.5vw; bottom: 14vh; max-width: 520px; margin: 0; }
@@ -532,9 +534,6 @@ select { width: 100%; padding: 8px; border-radius: 6px; border: none; margin-bot
   user-select: none;
   touch-action: none;
   outline: none;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.02);
 }
 .wheel-dial.dragging { cursor: grabbing; }
 .wheel-dial:focus-visible { outline: 2px solid #6da7ec; outline-offset: -2px; }
@@ -544,7 +543,9 @@ select { width: 100%; padding: 8px; border-radius: 6px; border: none; margin-bot
   top: 50%; left: 22px; right: 12px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   background: none; border: none; padding: 0; margin: 0;
-  font-size: 13px; line-height: 1.25; font-family: inherit; font-weight: 400;
+  /* font-size is set inline (js/core/optionWheel.js) from the same
+     cfg.fontSizePx the scroll physics use, so the two never drift apart. */
+  line-height: 1.25; font-family: inherit; font-weight: 400;
   text-align: left; transform-origin: left center; cursor: pointer;
   will-change: transform, opacity, filter;
 }
