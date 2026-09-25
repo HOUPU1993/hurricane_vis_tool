@@ -14,7 +14,6 @@
 // interrogated point-by-point - the caption's n/r already carries the
 // numbers that matter, and Page 5's regression page is where the modeling
 // happens for real.
-import { percentile } from "./colorScale.js";
 
 const PANEL_W = 96;
 const PANEL_H = 88;
@@ -33,9 +32,16 @@ const SHORT_DV_LABEL = {
   median_return_days: "Return Days",
 };
 
-function domainFor(values, clipLow, clipHigh) {
-  const sorted = [...values].sort((a, b) => a - b);
-  return { lo: percentile(sorted, clipLow), hi: percentile(sorted, clipHigh) };
+// Plain min/max - NOT the percentile-clipped domain js/core/histogram.js
+// uses. An earlier version clipped this to each metric's clipLow/clipHigh
+// (authored for the single-variable histogram), but for a scatter that
+// clamps every point beyond the cut to the exact same pixel, stacking them
+// into a straight row along the plot's edge - a real, visible artifact, not
+// just a softer version of "outliers stretch the axis". Matching the full
+// range (same as a plain `x.min()`/`x.max()` in a notebook) is what makes
+// the point cloud's actual shape legible.
+function domainFor(values) {
+  return { lo: Math.min(...values), hi: Math.max(...values) };
 }
 
 // Pearson r + a simple OLS fit, both from the full raw (unclipped) pairs -
@@ -107,7 +113,7 @@ export function renderScatterRow(container, featureMetric, dvMetrics, features) 
     const v = f.properties[featureMetric.field];
     if (v != null) rawX.push(v);
   }
-  const xDomain = domainFor(rawX, featureMetric.clipLow, featureMetric.clipHigh);
+  const xDomain = domainFor(rawX);
 
   for (const dv of dvMetrics) {
     const panel = document.createElement("div");
@@ -134,7 +140,7 @@ export function renderScatterRow(container, featureMetric, dvMetrics, features) 
       continue;
     }
 
-    const yDomain = domainFor(points.map((p) => p[1]), dv.clipLow, dv.clipHigh);
+    const yDomain = domainFor(points.map((p) => p[1]));
     const fit = fitStats(points);
 
     const svgHolder = document.createElement("div");
