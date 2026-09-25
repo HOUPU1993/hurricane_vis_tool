@@ -26,6 +26,10 @@ const PAD = 4;
 const SHORT_DV_LABEL = {
   evacuation_rate: "Evac. Rate",
   median_evacuation_distance_km: "Evac. Distance",
+  // Also keyed by the log-transformed field name js/metrics/scatterFields.js
+  // resolves distance to for the scatter dataset - same short label either
+  // way, it's still distance, just plotted on a friendlier scale.
+  log_median_evacuation_distance_km: "Evac. Distance",
   median_return_days: "Return Days",
 };
 

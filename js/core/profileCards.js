@@ -7,6 +7,7 @@
 import { computeDomain } from "./colorScale.js";
 import { renderHistogram } from "./histogram.js";
 import { renderScatterRow } from "./scatterPlot.js";
+import { SCATTER_FEATURE_FIELD, SCATTER_DV_FIELD } from "../metrics/scatterFields.js";
 
 // The three core outcome variables (see js/metrics/evacuation.js) - every
 // other category's cards get a scatter of feature-vs-outcome for each of
@@ -15,6 +16,14 @@ import { renderScatterRow } from "./scatterPlot.js";
 // be meaningless.
 const OUTCOME_FIELDS = ["evacuation_rate", "median_evacuation_distance_km", "median_return_days"];
 const EVACUATION_CATEGORY = "Mobile Phone Evacuation Detection";
+
+// The scatter plots alone read from this modeling-ready extract (real
+// per-block-group pairs, standardized/log-transformed to match the actual
+// regression variables) rather than data/blockgroups.geojson - see
+// js/metrics/scatterFields.js for why and the field-by-field crosswalk.
+// Everything else on this page (stats table, histogram) keeps using the raw
+// blockgroups.geojson data, untouched.
+const SCATTER_DATA_URL = "data/vis_vbs_for_scatter.geojson";
 
 const ROWS = [
   ["Min", "min"],
@@ -52,8 +61,22 @@ export async function renderProfileCards(container, categories) {
 
   container.textContent = "";
 
+  // Fetched separately from the two above, and its own failure doesn't take
+  // the whole page down with it - a stats-table-and-histogram profile is
+  // still useful on its own, it just loses the scatter rows.
+  let scatterFeatures = null;
+  try {
+    const scatterRes = await fetch(SCATTER_DATA_URL);
+    scatterFeatures = (await scatterRes.json()).features;
+  } catch (err) {
+    console.warn(`Could not load scatter data (${SCATTER_DATA_URL}) - relationship-to-outcomes plots will be skipped.`, err);
+  }
+
   const evacCategory = categories.find((c) => c.name === EVACUATION_CATEGORY);
   const dvMetrics = evacCategory ? evacCategory.metrics.filter((m) => OUTCOME_FIELDS.includes(m.field)) : [];
+  const scatterDvMetrics = dvMetrics
+    .map((dv) => (SCATTER_DV_FIELD[dv.field] ? { ...dv, field: SCATTER_DV_FIELD[dv.field] } : null))
+    .filter(Boolean);
 
   for (const cat of categories) {
     const section = document.createElement("section");
@@ -117,9 +140,17 @@ export async function renderProfileCards(container, categories) {
       card.appendChild(histWrap);
 
       // Scatter against each of the three outcomes - every category except
-      // the outcomes' own (see OUTCOME_FIELDS/EVACUATION_CATEGORY above).
-      if (cat.name !== EVACUATION_CATEGORY && dvMetrics.length === OUTCOME_FIELDS.length) {
-        renderScatterRow(card, metric, dvMetrics, geoData.features);
+      // the outcomes' own (see OUTCOME_FIELDS/EVACUATION_CATEGORY above),
+      // and only for metrics with a processed counterpart in the scatter
+      // dataset (see js/metrics/scatterFields.js).
+      const scatterField = SCATTER_FEATURE_FIELD[metric.field];
+      if (
+        cat.name !== EVACUATION_CATEGORY &&
+        scatterField &&
+        scatterFeatures &&
+        scatterDvMetrics.length === OUTCOME_FIELDS.length
+      ) {
+        renderScatterRow(card, { ...metric, field: scatterField }, scatterDvMetrics, scatterFeatures);
       }
 
       const nEl = document.createElement("p");
