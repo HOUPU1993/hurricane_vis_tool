@@ -57,22 +57,21 @@ html, body {
    height, sitting above whatever page is actually active - underneath
    every other section. */
 .page--active.page--home { display: block; }
-.page-enter { animation: pageIn 0.55s ease both; }
-@keyframes pageIn {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Depth transition: entering page pushes forward from slightly small +
+   drifted-up + invisible up to its resting size/position/opacity. */
+.page-enter { animation: pageEnterDepth 0.5s cubic-bezier(.2, .7, .3, 1) both; }
+@keyframes pageEnterDepth {
+  from { opacity: 0; transform: scale(0.96) translateY(16px); filter: blur(4px); }
+  to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
 }
-
-/* Page-to-page transition: a solid, destination-colored panel created once
-   by router.js and reused for every navigation. It sweeps in from the
-   left, the hash change (and the instant page swap it triggers) happens
-   while it's fully covering the screen, then it sweeps out to the right -
-   the new page's own .page-enter fade+drift is already playing
-   underneath by the time it's revealed. Starts off-screen and covers
-   nothing until a navigation sets its transform, so it can never flash. */
-#page-curtain {
-  position: fixed; inset: 0; z-index: 500; pointer-events: none;
-  transform: translateX(-101%);
+/* Fired by router.js on internal link clicks, before the hash actually
+   changes: the outgoing page pushes back, blurs, and fades - once this
+   finishes the hash changes, swapping in the new page mid-.page-enter -
+   so the two read as one continuous push-through rather than a cut. */
+.page-exit-depth { animation: pageExitDepth 0.42s cubic-bezier(.6, 0, .2, 1) both; }
+@keyframes pageExitDepth {
+  from { opacity: 1; transform: scale(1); filter: blur(0); }
+  to { opacity: 0; transform: scale(1.04); filter: blur(5px); }
 }
 
 .page-inner { max-width: 860px; margin: 0 auto; padding: calc(var(--nav-h) + 40px) 24px 100px; }
@@ -339,12 +338,6 @@ sup.cite a:hover { text-decoration: underline; }
   box-shadow: 0 0 6px 1px rgba(232, 123, 164, 0.7);
 }
 .terrain-label-txt { position: absolute; }
-
-.terrain-caption {
-  position: absolute; right: 5vw; bottom: 22px; z-index: 1; max-width: 260px;
-  font-size: 11px; line-height: 1.6; color: var(--muted-dim); text-align: right; margin: 0;
-}
-.terrain-caption strong { color: var(--muted); }
 
 .hero { position: absolute; z-index: 2; left: 6.5vw; bottom: 14vh; max-width: 520px; margin: 0; }
 
