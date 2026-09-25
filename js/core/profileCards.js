@@ -16,6 +16,10 @@ const ROWS = [
   ["Max", "max"],
 ];
 
+function slugify(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
 export async function renderProfileCards(container, categories) {
   container.textContent = "";
   const loading = document.createElement("p");
@@ -41,7 +45,13 @@ export async function renderProfileCards(container, categories) {
 
   for (const cat of categories) {
     const section = document.createElement("section");
-    section.className = "profile-category";
+    // Doubles as an Option Wheel panel: js/core/optionWheel.js reads
+    // data-wheel-panel/-label off each .wheel-panel it finds, so one
+    // category = one wheel button, generated straight from this same
+    // CATEGORIES list rather than a hand-kept-in-sync duplicate.
+    section.className = "profile-category wheel-panel";
+    section.dataset.wheelPanel = slugify(cat.name);
+    section.dataset.wheelLabel = cat.name;
 
     const heading = document.createElement("h3");
     heading.textContent = cat.name;
@@ -54,7 +64,7 @@ export async function renderProfileCards(container, categories) {
     for (const metric of cat.metrics) {
       const s = stats[metric.field];
       const card = document.createElement("article");
-      card.className = "profile-card reveal";
+      card.className = "profile-card";
       card.style.setProperty("--cat-color", metric.color);
 
       const title = document.createElement("h4");

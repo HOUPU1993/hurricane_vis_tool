@@ -7,8 +7,38 @@ import { loopTypeSequence } from "./core/typewriter.js";
 import { initTerrainScene } from "./core/terrainScene.js";
 import { initRegressionPage } from "./core/regressionPage.js";
 import { initNationalStudyMap } from "./core/nationalStudyMap.js";
+import { initOptionWheel, initWheelCitationJump } from "./core/optionWheel.js";
 
 initScrollReveal();
+initWheelCitationJump();
+
+// Pages 1, 2, 5, 6, 7 each disclose their content through an Option Wheel
+// (Page 3 keeps its own interactive map/dropdown instead, and Page 4's wheel
+// is built from dynamically-rendered category cards below, once loaded).
+// Their markup is static from page load, so the wheels themselves can init
+// immediately - only the *content behind* a panel (KaTeX, the Page 7 map)
+// needs the lazy, first-visit-only treatment already used per-page below.
+const page7Wheel = document.getElementById("page7-wheel");
+for (const id of ["page1-wheel", "page2-wheel", "page5-wheel", "page6-wheel", "page7-wheel"]) {
+  const root = document.getElementById(id);
+  if (root) initOptionWheel(root);
+}
+
+// The national-status Leaflet map lives behind Page 7's "Data-Collection
+// Status" wheel panel, which isn't necessarily the panel shown by default -
+// so, like Page 3's dashboard, it can't safely init until that panel is
+// actually visible (Leaflet measures a display:none container as 0x0).
+// Init once on first reveal, then just invalidateSize() on every later one.
+if (page7Wheel) {
+  page7Wheel.addEventListener("wheel:show", (e) => {
+    if (e.detail.id !== "data-status") return;
+    if (!nationalStudyMap) {
+      nationalStudyMap = initNationalStudyMap("national-status-map");
+    } else {
+      setTimeout(() => nationalStudyMap.invalidateSize(), 0);
+    }
+  });
+}
 
 // Duplicated from index.html's static hero markup (which stays as plain
 // text for no-JS/SEO/accessibility) so the typewriter has a clean string -
@@ -32,7 +62,6 @@ let heroTypeLoop = null;
 let mathRendered = false;
 let regressionPageLoaded = false;
 let nationalStudyMap = null;
-let nationalMapLoaded = false;
 let mathRenderedPage7 = false;
 let terrainScene = null;
 
@@ -99,16 +128,6 @@ initRouter({
       renderMathIn(document.getElementById("page-7"));
     }
 
-    if (id === "7" && !nationalMapLoaded) {
-      nationalMapLoaded = true;
-      nationalStudyMap = initNationalStudyMap("national-status-map");
-      initScrollReveal(document.getElementById("page-7"));
-    } else if (id === "7" && nationalStudyMap) {
-      // Same Leaflet display:none-container caveat as Page 3's dashboard -
-      // tell it to remeasure now that its container is visible again.
-      setTimeout(() => nationalStudyMap.invalidateSize(), 0);
-    }
-
     if (id === "3") {
       if (!dashboard) {
         dashboard = initDashboard();
@@ -122,14 +141,15 @@ initRouter({
     if (id === "4" && !profileCardsLoaded) {
       profileCardsLoaded = true;
       renderProfileCards(document.getElementById("profile-cards"), CATEGORIES).then(() => {
-        initScrollReveal(document.getElementById("profile-cards"));
+        // Category sections come back tagged as .wheel-panel (see
+        // profileCards.js) - the wheel can only be built once they exist.
+        initOptionWheel(document.getElementById("page4-wheel"));
       });
     }
 
     if (id === "5" && !regressionPageLoaded) {
       regressionPageLoaded = true;
       initRegressionPage();
-      initScrollReveal(document.getElementById("page-5"));
     }
   },
 });
